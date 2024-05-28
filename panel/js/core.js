@@ -1805,11 +1805,17 @@ function setUserData() {
 }
 
 // Obtener la fecha Unix de inicio y la duración del contador
-const startTime = 1716791367; // Fecha Unix de inicio
+let startTime = 1716791367; // Fecha Unix de inicio
 const duration = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
 
 // Calcular el tiempo objetivo sumando la fecha de inicio y la duración
-rTargetTime = startTime * 1000 + duration;
+let rTargetTime = startTime * 1000 + duration;
+
+// Función para actualizar el temporizador
+async function updateTimer() {
+    const currentTime = await getCurrentTimeFromNTP();
+    updateTimerDisplay(currentTime);
+}
 
 // Obtener el tiempo actual del servidor NTP
 async function getCurrentTimeFromNTP() {
@@ -1823,11 +1829,7 @@ async function getCurrentTimeFromNTP() {
     }
 }
 
-// Actualizar el tiempo restante cada segundo
-setInterval(async () => {
-    updateTimerDisplay(await getCurrentTimeFromNTP());
-}, 1000);
-
+// Función para actualizar la visualización del temporizador
 async function updateTimerDisplay(currentTime) {
     if (!currentTime) return;
 
@@ -1855,6 +1857,11 @@ async function updateTimerDisplay(currentTime) {
     }
 }
 
+// Actualizar el temporizador cada segundo
+setInterval(updateTimer, 1000);
+
+// Al cargar la página, actualizar el temporizador
+window.addEventListener('load', updateTimer);
 
 
 

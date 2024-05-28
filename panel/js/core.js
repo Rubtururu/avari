@@ -1941,6 +1941,18 @@ function validateAddress(address) {
 let rTargetTime;
 getTimer();
 
+// Función para obtener el tiempo actual del servidor NTP
+async function getCurrentTimeFromNTP() {
+    try {
+        const response = await fetch("https://worldtimeapi.org/api/ip");
+        const data = await response.json();
+        return new Date(data.unixtime * 1000); // Convertir el tiempo UNIX a milisegundos
+    } catch (error) {
+        console.error("Error al obtener la hora del servidor NTP:", error);
+        return null;
+    }
+}
+
 function getTimer() {
     let xmlhttp_gu = new XMLHttpRequest();
     xmlhttp_gu.open("POST", "/get-next-round", true);
@@ -1953,6 +1965,9 @@ function getTimer() {
 
         // Asegúrate de que `rTargetTime` sea un número
         rTargetTime = parseInt(xmlhttp_gu.responseText, 10);
+
+        // Actualizar el tiempo restante en la interfaz de usuario
+        updateTimerDisplay();
     }
 }
 
@@ -1960,14 +1975,18 @@ setInterval(() => {
     getTimer();
 }, 1000 * 60 * 5);
 
+// Actualizar el tiempo restante cada segundo
 setInterval(() => {
     updateTimerDisplay();
 }, 1000);
 
-function updateTimerDisplay() {
+async function updateTimerDisplay() {
     if (!rTargetTime) return;
 
-    const now = new Date().getTime();
+    const currentTime = await getCurrentTimeFromNTP();
+    if (!currentTime) return;
+
+    const now = currentTime.getTime();
     const t = rTargetTime - now;
 
     if (t < 0) {

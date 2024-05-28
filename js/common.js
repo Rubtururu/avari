@@ -32,7 +32,7 @@ $(function() {
 
 		// first argument year, month, date 
 		// arg month start from 0 
-		var date = new Date(2019, 3, 5, 0, 0, 0, 0);
+		var date = new Date(2024, 3, 26, 0, 0, 0, 0);
 		var now = new Date();
 		var diff = (date.getTime()/1000) - (now.getTime()/1000);
 	

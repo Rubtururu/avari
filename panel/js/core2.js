@@ -1932,8 +1932,8 @@ function validateAddress(address) {
 
 
 
-let rTargetTime
-getTimer()
+let rTargetTime;
+getTimer();
 
 function getTimer() {
     let xmlhttp_gu = new XMLHttpRequest();
@@ -1945,40 +1945,45 @@ function getTimer() {
         if (xmlhttp_gu.readyState !== 4 || xmlhttp_gu.status !== 200) return;
         if (xmlhttp_gu.responseText.length < 1) return;
 
-        rTargetTime = xmlhttp_gu.responseText
+        // Asegúrate de que `rTargetTime` sea un número
+        rTargetTime = parseInt(xmlhttp_gu.responseText, 10);
     }
 }
 
 setInterval(() => {
-    getTimer()
-}, 1000 * 60 * 5)
+    getTimer();
+}, 1000 * 60 * 5);
 
 setInterval(() => {
-    rewardTimer()
-}, 1000)
+    updateTimerDisplay();
+}, 1000);
 
-function rewardTimer() {
-    if (!rTargetTime) return
+function updateTimerDisplay() {
+    if (!rTargetTime) return;
 
-    var now = new Date().getTime()
-    var t = rTargetTime - now
-    var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))
-    var seconds = Math.floor((t % (1000 * 60)) / 1000)
+    const now = new Date().getTime();
+    const t = rTargetTime - now;
 
-    if (hours.toString().length == 1) hours = "0" + hours
-    if (minutes.toString().length == 1) minutes = "0" + minutes
-    if (seconds.toString().length == 1) seconds = "0" + seconds
+    if (t < 0) {
+        // Si la cuenta regresiva ha terminado, muestra 00:00:00
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            $('.day-end-in-mb')[0].innerHTML = `00 : 00 : 00`;
+        } else {
+            $('.day-end-in')[0].innerHTML = `Day Ends In: 00 : 00 : 00`;
+        }
+        return;
+    }
+
+    const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+    const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+    const seconds = String(Math.floor((t % (1000 * 60)) / 1000)).padStart(2, '0');
 
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`
+        $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`;
     } else {
-        $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`
+        $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
     }
-
-	
 }
-
 
 
 

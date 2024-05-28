@@ -1804,27 +1804,17 @@ function setUserData() {
     $('.user-data-1')[0].value = parseFloat((user.balance_bnb / 1e18).toFixed(4));
 }
 
-// Función para obtener la fecha Unix de inicio y la duración del contador
-let startTime = 1716791367; // Fecha Unix de inicio
+// Obtener la fecha Unix de inicio y la duración del contador
+const startTime = 1716791367; // Fecha Unix de inicio
 const duration = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
 
-// Función para inicializar la hora de inicio y el temporizador
+// Inicializar el temporizador
 async function initializeTimer() {
-    // Obtener la hora actual del servidor NTP
-    const currentTime = await getCurrentTimeFromNTP();
-    if (currentTime) {
-        // Establecer startTime como la hora actual si es mayor que el startTime anterior
-        startTime = Math.max(startTime, Math.floor(currentTime.getTime() / 1000));
-        // Calcular el tiempo objetivo sumando la fecha de inicio y la duración
-        rTargetTime = startTime * 1000 + duration;
-                // Actualizar el temporizador
-        updateTimerDisplay(currentTime);
-    } else {
-        console.error("Error al obtener la hora actual del servidor NTP.");
-    }
+    rTargetTime = startTime * 1000 + duration;
+    await updateTimerDisplay(await getCurrentTimeFromNTP());
 }
 
-// Obtener la hora actual del servidor NTP
+// Obtener el tiempo actual del servidor NTP
 async function getCurrentTimeFromNTP() {
     try {
         const response = await fetch("https://worldtimeapi.org/api/ip");
@@ -1838,8 +1828,7 @@ async function getCurrentTimeFromNTP() {
 
 // Actualizar el tiempo restante cada segundo
 setInterval(async () => {
-    await initializeTimer(); // Inicializar el temporizador al cargar la página
-    updateTimerDisplay(new Date()); // Actualizar el temporizador cada segundo
+    updateTimerDisplay(await getCurrentTimeFromNTP());
 }, 1000);
 
 async function updateTimerDisplay(currentTime) {

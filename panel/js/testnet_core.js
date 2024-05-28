@@ -1722,8 +1722,13 @@ const duration = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
 
 // Inicializar el temporizador
 async function initializeTimer() {
-    rTargetTime = startTime * 1000 + duration;
-    await updateTimerDisplay(await getCurrentTimeFromNTP());
+    const currentTime = await getCurrentTimeFromNTP();
+    if (currentTime) {
+        rTargetTime = startTime * 1000 + duration;
+        updateTimerDisplay(currentTime);
+    } else {
+        console.error("No se pudo obtener el tiempo actual del servidor NTP");
+    }
 }
 
 // Obtener el tiempo actual del servidor NTP
@@ -1740,10 +1745,12 @@ async function getCurrentTimeFromNTP() {
 
 // Actualizar el tiempo restante cada segundo
 setInterval(async () => {
-    updateTimerDisplay(await getCurrentTimeFromNTP());
+    if (rTargetTime) {
+        updateTimerDisplay(await getCurrentTimeFromNTP());
+    }
 }, 1000);
 
-async function updateTimerDisplay(currentTime) {
+function updateTimerDisplay(currentTime) {
     if (!currentTime) return;
 
     const now = currentTime.getTime();
@@ -1769,7 +1776,6 @@ async function updateTimerDisplay(currentTime) {
         $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
     }
 }
-
 
 
 

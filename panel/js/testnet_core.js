@@ -1851,63 +1851,25 @@ function validateAddress(address) {
 
 
 let rTargetTime;
-getTimer();
+let startTime = 1716791367; // Fecha Unix de inicio
+let duration = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
 
-// Función para obtener el tiempo actual del servidor NTP
-async function getCurrentTimeFromNTP() {
-    try {
-        const response = await fetch("https://worldtimeapi.org/api/ip");
-        const data = await response.json();
-        return new Date(data.unixtime * 1000); // Convertir el tiempo UNIX a milisegundos
-    } catch (error) {
-        console.error("Error al obtener la hora del servidor NTP:", error);
-        return null;
-    }
-}
+// Obtener la diferencia de tiempo desde la fecha de inicio
+let timeDiff = new Date().getTime() - (startTime * 1000);
+// Calcular el tiempo objetivo como la fecha de inicio más la duración
+rTargetTime = startTime * 1000 + duration - (timeDiff % duration);
 
-function getTimer() {
-    let xmlhttp_gu = new XMLHttpRequest();
-    xmlhttp_gu.open("POST", "/get-next-round", true);
-    xmlhttp_gu.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xmlhttp_gu.send('address=' + user.address);
-
-    xmlhttp_gu.onreadystatechange = (e) => {
-        if (xmlhttp_gu.readyState !== 4 || xmlhttp_gu.status !== 200) return;
-        if (xmlhttp_gu.responseText.length < 1) return;
-
-        // Asegúrate de que `rTargetTime` sea un número
-        rTargetTime = parseInt(xmlhttp_gu.responseText, 10);
-
-        // Actualizar el tiempo restante en la interfaz de usuario
-        updateTimerDisplay();
-    }
-}
-
-setInterval(() => {
-    getTimer();
-}, 1000 * 60 * 5);
-
-// Actualizar el tiempo restante cada segundo
 setInterval(() => {
     updateTimerDisplay();
 }, 1000);
 
-async function updateTimerDisplay() {
-    if (!rTargetTime) return;
-
-    const currentTime = await getCurrentTimeFromNTP();
-    if (!currentTime) return;
-
-    const now = currentTime.getTime();
+function updateTimerDisplay() {
+    const now = new Date().getTime();
     const t = rTargetTime - now;
 
     if (t < 0) {
-        // Si la cuenta regresiva ha terminado, muestra 00:00:00
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            $('.day-end-in-mb')[0].innerHTML = `00 : 00 : 00`;
-        } else {
-            $('.day-end-in')[0].innerHTML = `Day Ends In: 00 : 00 : 00`;
-        }
+        // Si el contador llega a cero, reiniciar
+        rTargetTime = now + duration;
         return;
     }
 

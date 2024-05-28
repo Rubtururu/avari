@@ -1770,7 +1770,6 @@ async function updateTimerDisplay(currentTime) {
 
 
 
-
 let moralisRecentEvents
 function getMoralisData_server() {
 	$.getJSON('../get-moralis-data', function(data) {

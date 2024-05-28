@@ -1594,232 +1594,220 @@ let abi = [
 ]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-const DESI = 100000000
-const SUN = 1000000
-const zeroAddress = "0x000000000000000000000000000000000000dEaD"
-let mainContract, currentDay
-let contractAddress = "0xE3B00d52C86750524295F06Acd8F844623A3A954"
+const DESI = 100000000;
+const SUN = 1000000;
+const zeroAddress = "0x000000000000000000000000000000000000dEaD";
+let mainContract, currentDay;
+let contractAddress = "0xE3B00d52C86750524295F06Acd8F844623A3A954";
 
 let user = {
     address: void 0,
     balance: void 0,
     balance_bnb: void 0,
     referrer: zeroAddress
-}
+};
 
 function setUpContracts() {
-    mainContract = new web3.eth.Contract(abi, contractAddress)
-    if (!mainContract) return void 0
+    mainContract = new web3.eth.Contract(abi, contractAddress);
+    if (!mainContract) return void 0;
 
-    contractLoaded()
-    console.log("Contract Loaded")
+    contractLoaded();
+    console.log("Contract Loaded");
 }
-// https://bsc-dataseed1.binance.org:443
-// https://data-seed-prebsc-1-s1.binance.org:8545"
-
 
 window.addEventListener('load', async () => {
-	
-	web3 = new Web3(new Web3.providers.HttpProvider("https://bsc-dataseed1.binance.org:443"));
-	web3.eth.setProvider(Web3.givenProvider);
-	let accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-	user.address = accs[0]
-	setUpContracts()
-	setUpAccount()
-	console.log("conn", accs[0])
+    web3 = new Web3(new Web3.providers.HttpProvider("https://bsc-dataseed1.binance.org:443"));
+    web3.eth.setProvider(Web3.givenProvider);
+    let accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    user.address = accs[0];
+    setUpContracts();
+    setUpAccount();
+    console.log("conn", accs[0]);
 
-	web3.eth.net.getId()
-	.then( netID => {
-		if(netID !== 56) alert("You are connected to a wrong network, please change to BSC network.")
-	});
+    web3.eth.net.getId().then(netID => {
+        if (netID !== 56) alert("You are connected to a wrong network, please change to BSC network.");
+    });
 
-	try {
-		// ask user for permission
-		await ethereum.enable();
-		// user approved permission
-	} catch (error) {
-		// user rejected permission
-		console.log('user rejected permission');
-	}
+    try {
+        await ethereum.enable();
+    } catch (error) {
+        console.log('user rejected permission');
+    }
 
+    function setUpAccount() {
+        updateHeadAddress();
 
-	function setUpAccount() {
-		updateHeadAddress()
-		
-		if ($('.ref-link')[0]) $('.ref-link')[0].value = "https://avaricetoken.io/?ref=" + user.address
+        if ($('.ref-link')[0]) $('.ref-link')[0].value = "https://avaricetoken.io/?ref=" + user.address;
 
-		if(typeof userAccConnected == "function") userAccConnected()
-	}
-})
+        if (typeof userAccConnected == "function") userAccConnected();
+    }
+});
 
 function updateHeadAddress() {
-    let p2 = user.address.slice(42 - 5)
-    // $('.my-acc-add')[1].innerHTML = user.address.slice(0, 5) + "..." + p2
-    $('.c-square-span')[0].innerHTML = user.address.slice(0, 5) + "..." + p2
+    let p2 = user.address.slice(42 - 5);
+    $('.c-square-span')[0].innerHTML = user.address.slice(0, 5) + "..." + p2;
 }
 
 function contractLoaded() {
-    if (!user.address) return
+    if (!user.address) return;
 
-    getUserBalance()
+    getUserBalance();
     setInterval(() => {
-        getUserBalance()
-    }, 1000 * 6)
+        getUserBalance();
+    }, 1000 * 6);
 
-    getCurrentDay()
+    getCurrentDay();
 
     let intso = setInterval(() => {
         if (currentDay) {
-            clearInterval(intso)
-			
-			if (typeof refreshGlobalData === "function") refreshGlobalData()
-            if (typeof run_Stake === "function") run_Stake()
-            if (typeof run_Auction === "function") run_Auction()
-            if (typeof run_Dividends === "function") run_Dividends()
-			averagePriceCalc()
+            clearInterval(intso);
+
+            if (typeof refreshGlobalData === "function") refreshGlobalData();
+            if (typeof run_Stake === "function") run_Stake();
+            if (typeof run_Auction === "function") run_Auction();
+            if (typeof run_Dividends === "function") run_Dividends();
+            averagePriceCalc();
         }
-    }, 100)
+    }, 100);
 }
 
 function getLobbyData() {
     mainContract.methods.lobbyEntry().call({
         shouldPollResponse: true
     }).then(res => {
-        console.log(res)
-    })
-
+        console.log(res);
+    });
 }
 
 function getCurrentDay() {
     mainContract.methods._clcDay().call({
         shouldPollResponse: true
     }).then(res => {
-        if (currentDay !== parseInt(res) && typeof auctionRender === "function") auctionRender(parseInt(res))
+        if (currentDay !== parseInt(res) && typeof auctionRender === "function") auctionRender(parseInt(res));
 
-        currentDay = parseInt(res)
-    })
+        currentDay = parseInt(res);
+    });
 
     setTimeout(() => {
-        getCurrentDay()
-    }, 1000 * 60 * 5)
+        getCurrentDay();
+    }, 1000 * 60 * 5);
 }
 
-// get balance of user and set it on the header
 function getUserBalance() {
     mainContract.methods.balanceOf(user.address).call({
         shouldPollResponse: false
     }).then(res => {
-        user.balance = parseInt(res)
-        
+        user.balance = parseInt(res);
+
         async function f() {
             let bnb_balance = await web3.eth.getBalance(user.address);
-            user.balance_bnb = parseInt(bnb_balance)
+            user.balance_bnb = parseInt(bnb_balance);
 
-            setUserData()
+            setUserData();
         }
-        f()
-    })
+        f();
+    });
 }
 
 function setUserData() {
-    $('.user-data-2')[0].value = parseFloat((user.balance / 1e18).toFixed(1))
-    $('.user-data-1')[0].value = parseFloat((user.balance_bnb / 1e18).toFixed(4))
+    $('.user-data-2')[0].value = parseFloat((user.balance / 1e18).toFixed(1));
+    $('.user-data-1')[0].value = parseFloat((user.balance_bnb / 1e18).toFixed(4));
 }
 
 function abbreviate_number(_num, fixed) {
-    let num = parseFloat(_num)
+    let num = parseFloat(_num);
     if (num === null) {
         return null;
-    } // terminate early
+    }
     if (num === 0) {
         return '0';
-    } // terminate early
-    fixed = (!fixed || fixed < 0) ? 0 : fixed; // number of decimal places to show
-    var b = (num).toPrecision(2).split("e"), // get power
-        k = b.length === 1 ? 0 : Math.floor(Math.min(b[1].slice(1), 14) / 3), // floor at decimals, ceiling at trillions
-        c = k < 1 ? num.toFixed(0 + fixed) : (num / Math.pow(10, k * 3)).toFixed(1 + fixed), // divide by power
-        d = c < 0 ? c : Math.abs(c), // enforce -0 is 0
-        e = d + ['', 'K', 'M', 'B', 'T'][k]; // append power
+    }
+    fixed = (!fixed || fixed < 0) ? 0 : fixed;
+    var b = (num).toPrecision(2).split("e"),
+        k = b.length === 1 ? 0 : Math.floor(Math.min(b[1].slice(1), 14) / 3),
+        c = k < 1 ? num.toFixed(0 + fixed) : (num / Math.pow(10, k * 3)).toFixed(1 + fixed),
+        d = c < 0 ? c : Math.abs(c),
+        e = d + ['', 'K', 'M', 'B', 'T'][k];
 
     return e;
 }
 
 function toFixedNoRounding(num, fixed) {
-    var re = new RegExp('^-?\\d+(?:\.\\d{0,' + (fixed || -1) + '})?');
+    var re = new RegExp('^-?\\d+(?:\\.\\d{0,' + (fixed || -1) + '})?');
     return num.toString().match(re)[0];
 }
 
 function abbreviate_number_cu1(num) {
-    let number = num.replace(/,/g, '')
-    const indexDes = number.indexOf(".")
-    let lcNm, doSk
+    let number = num.replace(/,/g, '');
+    const indexDes = number.indexOf(".");
+    let lcNm, doSk;
 
     if (indexDes == 1 && number[0] === "0") {
-        number = number.slice(0, indexDes + 9)
-        lcNm = 8
+        number = number.slice(0, indexDes + 9);
+        lcNm = 8;
     } else if (indexDes == 1 && number[0] !== "0") {
-        number = number.slice(0, indexDes + 8)
-        lcNm = 7
+        number = number.slice(0, indexDes + 8);
+        lcNm = 7;
     } else if (indexDes == 2) {
-        number = number.slice(0, indexDes + 6)
-        lcNm = 5
+        number = number.slice(0, indexDes + 6);
+        lcNm = 5;
     } else if (indexDes == 3) {
-        number = number.slice(0, indexDes + 4)
-        lcNm = 3
+        number = number.slice(0, indexDes + 4);
+        lcNm = 3;
     } else if (indexDes > 3) {
-        number = abbreviate_number(parseFloat(number), 2)
-        doSk = true
+        number = abbreviate_number(parseFloat(number), 2);
+        doSk = true;
     }
 
     if (doSk) {
-        return number
+        return number;
     } else {
         number = (parseFloat(number)).toLocaleString(void 0, {
             minimumFractionDigits: lcNm
-        })
-        return number
+        });
+        return number;
     }
 }
 
 function extraDesi(a) {
-    if (a.indexOf(".") == -1) return a
+    if (a.indexOf(".") == -1) return a;
 
     if (a.length - a.indexOf(".") >= 4) {
-        return a
+        return a;
     } else if (a.length - a.indexOf(".") == 3) {
-        return a + "0"
+        return a + "0";
     } else if (a.length - a.indexOf(".") == 2) {
-        return a + "00"
+        return a + "00";
     } else if (a.length - a.indexOf(".") == 1) {
-        return a + "000"
+        return a + "000";
     }
 }
 
-let int1, tm1, tm2
+let int1, tm1, tm2;
 
 function displayAlert(type, text, duration) {
-    const elm = $(`.alert-tb`)[type - 1]
-    if (!elm) return
+    const elm = $(`.alert-tb`)[type - 1];
+    if (!elm) return;
 
-    clearInterval(int1)
-    clearTimeout(tm1)
-    clearTimeout(tm2)
+    clearInterval(int1);
+    clearTimeout(tm1);
+    clearTimeout(tm2);
 
-    elm.style.display = "block"
-    elm.style.opacity = "1"
+    elm.style.display = "block";
+    elm.style.opacity = "1";
 
-    $('.alert-inner')[type - 1].innerHTML = text
+    $('.alert-inner')[type - 1].innerHTML = text;
 
     tm1 = setTimeout(() => {
         int1 = setInterval(() => {
-            elm.style.opacity = parseFloat(elm.style.opacity) - 0.01
-        }, 10)
-    }, duration || 3000)
+            elm.style.opacity = parseFloat(elm.style.opacity) - 0.01;
+        }, 10);
+    }, duration || 3000);
 
     tm2 = setTimeout(() => {
-        elm.style.display = "none"
-        clearInterval(int1)
-    }, duration + 2000 || 5000)
+        elm.style.display = "none";
+        clearInterval(int1);
+    }, duration + 2000 || 5000);
 }
 
 function accessCookie(cookieName) {
@@ -1834,7 +1822,7 @@ function accessCookie(cookieName) {
 }
 
 if (accessCookie("ref").length > 0) {
-    if (validateAddress(accessCookie("ref"))) user.referrer = accessCookie("ref")
+    if (validateAddress(accessCookie("ref"))) user.referrer = accessCookie("ref");
 }
 
 function validateAddress(address) {
@@ -1847,11 +1835,8 @@ function validateAddress(address) {
     return false;
 }
 
-
-
-
-let rTargetTime
-getTimer()
+let rTargetTime;
+getTimer();
 
 function getTimer() {
     let xmlhttp_gu = new XMLHttpRequest();
@@ -1863,38 +1848,45 @@ function getTimer() {
         if (xmlhttp_gu.readyState !== 4 || xmlhttp_gu.status !== 200) return;
         if (xmlhttp_gu.responseText.length < 1) return;
 
-        rTargetTime = xmlhttp_gu.responseText
-    }
+        rTargetTime = parseInt(xmlhttp_gu.responseText);
+    };
 }
 
 setInterval(() => {
-    getTimer()
-}, 1000 * 60 * 5)
+    getTimer();
+}, 1000 * 60 * 5);
 
 setInterval(() => {
-    rewardTimer()
-}, 1000)
+    rewardTimer();
+}, 1000);
 
 function rewardTimer() {
-    if (!rTargetTime) return
+    if (!rTargetTime) return;
 
-    var now = new Date().getTime()
-    var t = rTargetTime - now
-    var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))
-    var seconds = Math.floor((t % (1000 * 60)) / 1000)
+    var now = new Date().getTime();
+    var t = rTargetTime - now;
 
-    if (hours.toString().length == 1) hours = "0" + hours
-    if (minutes.toString().length == 1) minutes = "0" + minutes
-    if (seconds.toString().length == 1) seconds = "0" + seconds
-
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`
-    } else {
-        $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`
+    if (t < 0) {
+        t = 0;
     }
 
-	
+    var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((t % (1000 * 60)) / 1000);
+
+    hours = (hours < 10) ? "0" + hours : hours;
+    minutes = (minutes < 10) ? "0" + minutes : minutes;
+    seconds = (seconds < 10) ? "0" + seconds : seconds;
+
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        if ($('.day-end-in-mb')[0]) {
+            $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`;
+        }
+    } else {
+        if ($('.day-end-in')[0]) {
+            $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
+        }
+    }
 }
 
 

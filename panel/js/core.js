@@ -1805,65 +1805,55 @@ function setUserData() {
 }
 
 // Obtener la fecha Unix de inicio y la duración del contador
-const startTime = 1716791367; // Fecha Unix de inicio
-const duration = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
+const startTimeUnix = 1716791367; // Fecha Unix de inicio
+const durationMillis = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
 
-// Inicializar el temporizador
-async function initializeTimer() {
-    const currentTime = await getCurrentTimeFromNTP();
-    if (currentTime) {
-        rTargetTime = startTime * 1000 + duration;
-        updateTimerDisplay(currentTime);
-    } else {
-        console.error("No se pudo obtener el tiempo actual del servidor NTP");
-    }
-}
+// Calcular el tiempo objetivo sumando la fecha de inicio y la duración
+rTargetTime = startTimeUnix * 1000 + durationMillis;
 
 // Obtener el tiempo actual del servidor NTP
 async function getCurrentTimeFromNTP() {
-    try {
-        const response = await fetch("https://worldtimeapi.org/api/ip");
-        const data = await response.json();
-        return new Date(data.unixtime * 1000); // Convertir el tiempo UNIX a milisegundos
-    } catch (error) {
-        console.error("Error al obtener la hora del servidor NTP:", error);
-        return null;
-    }
+try {
+const response = await fetch("https://worldtimeapi.org/api/ip");
+const data = await response.json();
+return new Date(data.unixtime * 1000); // Convertir el tiempo UNIX a milisegundos
+} catch (error) {
+console.error("Error al obtener la hora del servidor NTP:", error);
+return null;
+}
 }
 
 // Actualizar el tiempo restante cada segundo
 setInterval(async () => {
-    if (rTargetTime) {
-        updateTimerDisplay(await getCurrentTimeFromNTP());
-    }
+updateTimerDisplay(await getCurrentTimeFromNTP());
 }, 1000);
 
-function updateTimerDisplay(currentTime) {
-    if (!currentTime) return;
+async function updateTimerDisplay(currentTime) {
+if (!currentTime) return;
+const now = currentTime.getTime();
+const t = rTargetTime - now;
 
-    const now = currentTime.getTime();
-    const t = rTargetTime - now;
-
-    if (t < 0) {
-        // Si la cuenta regresiva ha terminado, muestra 00:00:00
-        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-            $('.day-end-in-mb')[0].innerHTML = `00 : 00 : 00`;
-        } else {
-            $('.day-end-in')[0].innerHTML = `Day Ends In: 00 : 00 : 00`;
-        }
-        return;
-    }
-
-    const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-    const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-    const seconds = String(Math.floor((t % (1000 * 60)) / 1000)).padStart(2, '0');
-
+if (t < 0) {
+    // Si la cuenta regresiva ha terminado, muestra 00:00:00
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`;
+        $('.day-end-in-mb')[0].innerHTML = `00 : 00 : 00`;
     } else {
-        $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
+        $('.day-end-in')[0].innerHTML = `Day Ends In: 00 : 00 : 00`;
     }
+    return;
 }
+
+const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+const seconds = String(Math.floor((t % (1000 * 60)) / 1000)).padStart(2, '0');
+
+if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`;
+} else {
+    $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
+}
+
+
 
 
 

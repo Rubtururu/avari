@@ -310,7 +310,7 @@ function refreshGlobalData() {
         $('.uns-12')[0].innerHTML = (parseInt(res)/1e18).toFixed(2) + " AVC"
     })
 
-    web3.eth.getBalance("0xFF2e3058E0C4732418Eb3d4C382328718C6c2Bdf", function(err, result) {
+    web3.eth.getBalance("0xE3B00d52C86750524295F06Acd8F844623A3A954", function(err, result) {
         if (err) {
           console.log(err)
         } else {

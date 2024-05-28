@@ -1609,13 +1609,12 @@ let user = {
 
 let rTargetTime;
 
-async function setUpContracts() {
+function setUpContracts() {
     mainContract = new web3.eth.Contract(abi, contractAddress)
     if (!mainContract) return void 0
 
     contractLoaded()
     console.log("Contract Loaded")
-    await initializeTimer(); // Inicializar el temporizador al cargar el contrato
 }
 
 window.addEventListener('load', async () => {
@@ -1721,11 +1720,8 @@ function setUserData() {
 const startTime = 1716791367; // Fecha Unix de inicio
 const duration = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
 
-// Inicializar el temporizador
-async function initializeTimer() {
-    rTargetTime = startTime * 1000 + duration;
-    await updateTimerDisplay(await getCurrentTimeFromNTP());
-}
+// Calcular el tiempo objetivo sumando la fecha de inicio y la duración
+rTargetTime = startTime * 1000 + duration;
 
 // Obtener el tiempo actual del servidor NTP
 async function getCurrentTimeFromNTP() {
@@ -1770,7 +1766,6 @@ async function updateTimerDisplay(currentTime) {
         $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
     }
 }
-
 
 
 

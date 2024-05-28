@@ -1682,34 +1682,38 @@ let abi = [
 ]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
-const DESI = 100000000;
-const SUN = 1000000;
-const zeroAddress = "0x000000000000000000000000000000000000dEaD";
-let mainContract, currentDay;
-let contractAddress = "0xE3B00d52C86750524295F06Acd8F844623A3A954";
+const DESI = 100000000
+const SUN = 1000000
+const zeroAddress = "0x000000000000000000000000000000000000dEaD"
+let mainContract, currentDay
+let contractAddress = "0xE3B00d52C86750524295F06Acd8F844623A3A954"
 
 let user = {
-    address: undefined,
-    balance: undefined,
-    balance_bnb: undefined,
+    address: void 0,
+    balance: void 0,
+    balance_bnb: void 0,
     referrer: zeroAddress
-};
+}
 
-function setUpContracts() {
-    mainContract = new web3.eth.Contract(abi, contractAddress);
-    if (!mainContract) return;
-    contractLoaded();
-    console.log("Contract Loaded");
+let rTargetTime;
+
+async function setUpContracts() {
+    mainContract = new web3.eth.Contract(abi, contractAddress)
+    if (!mainContract) return void 0
+
+    contractLoaded()
+    console.log("Contract Loaded")
+    await initializeTimer(); // Inicializar el temporizador al cargar el contrato
 }
 
 window.addEventListener('load', async () => {
     web3 = new Web3(new Web3.providers.HttpProvider("https://bsc-dataseed1.binance.org:443"));
     web3.eth.setProvider(Web3.givenProvider);
     let accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    user.address = accs[0];
-    setUpContracts();
-    setUpAccount();
-    console.log("conn", accs[0]);
+    user.address = accs[0]
+    setUpContracts()
+    setUpAccount()
+    console.log("conn", accs[0])
 
     try {
         // ask user for permission
@@ -1719,63 +1723,64 @@ window.addEventListener('load', async () => {
         // user rejected permission
         console.log('user rejected permission');
     }
-});
+})
 
 function setUpAccount() {
-    updateHeadAddress();
+    updateHeadAddress()
 
-    if ($('.ref-link')[0]) $('.ref-link')[0].value = "https://avaricetoken.io/?ref=" + user.address;
+    if ($('.ref-link')[0]) $('.ref-link')[0].value = "https://avaricetoken.io/?ref=" + user.address
 
-    if (typeof userAccConnected == "function") userAccConnected();
+    if (typeof userAccConnected == "function") userAccConnected()
 }
 
 function updateHeadAddress() {
-    let p2 = user.address.slice(42 - 5);
-    $('.c-square-span')[0].innerHTML = user.address.slice(0, 5) + "..." + p2;
+    let p2 = user.address.slice(42 - 5)
+    // $('.my-acc-add')[1].innerHTML = user.address.slice(0, 5) + "..." + p2
+    $('.c-square-span')[0].innerHTML = user.address.slice(0, 5) + "..." + p2
 }
 
 function contractLoaded() {
-    if (!user.address) return;
+    if (!user.address) return
 
-    getUserBalance();
+    getUserBalance()
     setInterval(() => {
-        getUserBalance();
-    }, 1000 * 6);
+        getUserBalance()
+    }, 1000 * 6)
 
-    getCurrentDay();
+    getCurrentDay()
 
     let intso = setInterval(() => {
         if (currentDay) {
-            clearInterval(intso);
+            clearInterval(intso)
 
-            if (typeof refreshGlobalData === "function") refreshGlobalData();
-            if (typeof run_Stake === "function") run_Stake();
-            if (typeof run_Auction === "function") run_Auction();
-            if (typeof run_Dividends === "function") run_Dividends();
+            if (typeof refreshGlobalData === "function") refreshGlobalData()
+            if (typeof run_Stake === "function") run_Stake()
+            if (typeof run_Auction === "function") run_Auction()
+            if (typeof run_Dividends === "function") run_Dividends()
         }
-    }, 100);
+    }, 100)
 }
 
 function getLobbyData() {
     mainContract.methods.lobbyEntry().call({
         shouldPollResponse: true
     }).then(res => {
-        console.log(res);
-    });
+        console.log(res)
+    })
 }
 
 function getCurrentDay() {
     mainContract.methods._clcDay().call({
         shouldPollResponse: true
     }).then(res => {
-        if (currentDay !== parseInt(res) && typeof auctionRender === "function") auctionRender(parseInt(res));
+        if (currentDay !== parseInt(res) && typeof auctionRender === "function") auctionRender(parseInt(res))
 
-        currentDay = parseInt(res);
-    });
+        currentDay = parseInt(res)
+    })
 
     setTimeout(() => {
-        getCurrentDay();
-    }, 1000 * 60 * 5);
+        getCurrentDay()
+    }, 1000 * 60 * 5)
 }
 
 // get balance of user and set it on the header
@@ -1792,7 +1797,7 @@ function getUserBalance() {
             setUserData();
         }
         f();
-    });
+    })
 }
 
 function setUserData() {
@@ -1804,14 +1809,13 @@ function setUserData() {
 const startTime = 1716791367; // Fecha Unix de inicio
 const duration = 24 * 60 * 60 * 1000; // Duración de 24 horas en milisegundos
 
-// Calcular el tiempo objetivo sumando la fecha de inicio y la duración
-let rTargetTime = startTime * 1000 + duration;
+// Inicializar el temporizador
+async function initializeTimer() {
+    rTargetTime = startTime * 1000 + duration;
+    await updateTimerDisplay(await getCurrentTimeFromNTP());
+}
 
-// Actualizar el tiempo restante cada segundo
-setInterval(async () => {
-    updateTimerDisplay(await getCurrentTimeFromNTP());
-}, 1000);
-
+// Obtener el tiempo actual del servidor NTP
 async function getCurrentTimeFromNTP() {
     try {
         const response = await fetch("https://worldtimeapi.org/api/ip");
@@ -1823,29 +1827,36 @@ async function getCurrentTimeFromNTP() {
     }
 }
 
+// Actualizar el tiempo restante cada segundo
+setInterval(async () => {
+    updateTimerDisplay(await getCurrentTimeFromNTP());
+}, 1000);
+
 async function updateTimerDisplay(currentTime) {
     if (!currentTime) return;
 
     const now = currentTime.getTime();
-const t = rTargetTime - now;
-if (t < 0) {
-    // Si la cuenta regresiva ha terminado, muestra 00:00:00
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        $('.day-end-in-mb')[0].innerHTML = `00 : 00 : 00`;
-    } else {
-        $('.day-end-in')[0].innerHTML = `Day Ends In: 00 : 00 : 00`;
+    const t = rTargetTime - now;
+
+    if (t < 0) {
+        // Si la cuenta regresiva ha terminado, muestra 00:00:00
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            $('.day-end-in-mb')[0].innerHTML = `00 : 00 : 00`;
+        } else {
+            $('.day-end-in')[0].innerHTML = `Day Ends In: 00 : 00 : 00`;
+        }
+        return;
     }
-    return;
-}
 
-const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-const seconds = String(Math.floor((t % (1000 * 60)) / 1000)).padStart(2, '0');
+    const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+    const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+    const seconds = String(Math.floor((t % (1000 * 60)) / 1000)).padStart(2, '0');
 
-if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-    $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`;
-} else {
-    $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`;
+    } else {
+        $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
+    }
 }
 
 

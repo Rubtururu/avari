@@ -739,6 +739,27 @@ function TransferAVCTokens() {
 }
 
 
+// Función para obtener eventos recientes
+async function getRecentEvents() {
+    try {
+        // Obtener eventos desde el bloque 0 hasta el bloque actual
+        const events = await contract.getPastEvents('allEvents', {
+            fromBlock: 'latest', // Puedes ajustar el rango de bloques según sea necesario
+            toBlock: 'latest'
+        });
+        renderEventsData(events);
+    } catch (error) {
+        console.error('Error fetching events from contract:', error);
+    }
+}
+
+// Llamar a getRecentEvents cada 10 segundos
+setInterval(() => {
+    getRecentEvents();
+}, 1000 * 10);
+
+// Llamar inmediatamente para la primera carga
+getRecentEvents();
 
 
 

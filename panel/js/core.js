@@ -761,6 +761,88 @@ setInterval(() => {
 // Llamar inmediatamente para la primera carga
 getRecentEvents();
 
+function renderEventsData(events) {
+    if (!events || !Array.isArray(events)) {
+        console.error("Invalid events data:", events);
+        return;
+    }
+
+    let counter = 0;
+    document.querySelector('.recent-events').innerHTML = ""; // Limpiar el contenido previo
+
+    events.forEach(event => {
+        let txt;
+        switch (event.event) {
+            case 'StakeStarted':
+                txt = `Stake Started: ${(parseInt(event.returnValues.rawAmount) / 1e18).toFixed(2)} AVC for ${event.returnValues.duration} days`;
+                break;
+            case 'StakeCollected':
+                txt = `Stake Collected: ${(parseInt(event.returnValues.rawAmount) / 1e18).toFixed(5)} BNB`;
+                break;
+            case 'AuctionEntered':
+                txt = `Auction Entered: ${parseInt(event.returnValues.rawAmount) / 1e18} BNB`;
+                break;
+            case 'StakeSellRequest':
+                if (counter < 15) {
+                    txt = `${parseInt(event.returnValues.rawAmount) / 1e18} AVC Stake sell request for ${parseInt(event.returnValues.price) / 1e18} BNB`;
+                    counter++;
+                }
+                break;
+            case 'LoanRequest':
+                txt = `${parseInt(event.returnValues.rawAmount) / 1e18} BNB Loan request for ${parseInt(event.returnValues.duration)} Days`;
+                break;
+            default:
+                txt = "Unknown Event";
+                break;
+        }
+        addEventToDOM(event, txt);
+    });
+}
+
+function addEventToDOM(event, txt) {
+    let p22 = event.returnValues.addr.slice(-5);
+    document.querySelector('.recent-events').innerHTML += `
+        <div id="${parseInt(event.returnValues.timestamp)}" onclick="window.open('https://bscscan.com/tx/${event.transactionHash}')"
+            style="background-color: #2e8b90; cursor: pointer; margin: 6px; border-radius: 3px; height: auto; color: #ffffffb8; text-align: center; margin: 8px;">
+            <div style="background-color: #267579; border-radius: 3px;">
+                ${event.returnValues.addr.slice(0, 5) + "..." + p22}
+            </div>
+            <div style="border-radius: 3px; height: 20px; color: #ffffffb8; text-align: center; display: contents; font-size: inherit; font-weight: 400;">
+                ${txt}
+            </div>
+            <div style="font-size: 12px; border-radius: 3px; color: #ffffff52; text-align: right; margin-right: 3px;">
+                ${timeSince(parseInt(event.returnValues.timestamp) * 1000)} ago
+            </div>
+        </div>`;
+}
+
+function timeSince(date) {
+    var seconds = Math.floor((new Date() - date) / 1000);
+    var interval = seconds / 31536000;
+
+    if (interval > 1) {
+        return Math.floor(interval) + " year/s";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+        return Math.floor(interval) + " month/s";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+        return Math.floor(interval) + " day/s";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+        return Math.floor(interval) + " hour/s";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+        return Math.floor(interval) + " minute/s";
+    }
+    return Math.floor(seconds) + " second/s";
+}
+
+
 
 
 function copyreflink() {

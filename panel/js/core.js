@@ -1884,8 +1884,8 @@ async function updateTimerDisplay(currentTime) {
 
 
 /* Moralis init code */
-const serverUrl = "https://site1.moralis-nodes.com/bsc-testnet/99dd9b4316bf45e0be9f4fad6566eb02";
-const appId = "5a87cc10-5125-4d97-8f91-98e647f7b248";
+const serverUrl = "https://deep-index.moralis.io/api/v2.2/nft/0x524cab2ec69124574082676e6f654a18df49a048/7603";
+const appId = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6IjVkZTU4N2FkLTc1MDAtNDQ5Ni05ZTZhLTc3MDM1ZDM1MTVjNSIsIm9yZ0lkIjoiMzk0MTM3IiwidXNlcklkIjoiNDA0OTkzIiwidHlwZUlkIjoiNWE4N2NjMTAtNTEyNS00ZDk3LThmOTEtOThlNjQ3ZjdiMjQ4IiwidHlwZSI6IlBST0pFQ1QiLCJpYXQiOjE3MTY5NDE1ODcsImV4cCI6NDg3MjcwMTU4N30.10dNlclk2yp0-Gwc6da6Gy3Lbz78SXnkH1btAat_oNw";
 Moralis.start({serverUrl, appId});
 
 let aaaa

@@ -1938,60 +1938,46 @@ function validateAddress(address) {
 
 
 
-let rTargetTime = null;
+// Fecha objetivo inicial en segundos desde Unix
+const initialTargetTime = 1716791367;
+const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-function getTimer() {
-    let xmlhttp_gu = new XMLHttpRequest();
-    xmlhttp_gu.open("POST", "/get-next-round", true);
-    xmlhttp_gu.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    xmlhttp_gu.send('address=' + user.address);
-
-    xmlhttp_gu.onreadystatechange = (e) => {
-        if (xmlhttp_gu.readyState !== 4 || xmlhttp_gu.status !== 200) return;
-        if (xmlhttp_gu.responseText.length < 1) return;
-
-        // Asegúrate de que la respuesta sea un número válido
-        rTargetTime = parseInt(xmlhttp_gu.responseText, 10);
-        if (isNaN(rTargetTime)) {
-            console.error("Invalid target time received:", xmlhttp_gu.responseText);
-            rTargetTime = null;
-        }
-    }
+// Función para calcular el próximo tiempo objetivo
+function calculateNextTargetTime(currentTime) {
+    const initialTargetDate = new Date(initialTargetTime * 1000);
+    const daysElapsed = Math.floor((currentTime - initialTargetDate.getTime()) / oneDayInMillis);
+    const nextTargetDate = new Date(initialTargetDate.getTime() + ((daysElapsed + 1) * oneDayInMillis));
+    return nextTargetDate.getTime();
 }
 
-setInterval(() => {
-    getTimer();
-}, 1000 * 60 * 5);
-
-setInterval(() => {
-    rewardTimer();
-}, 1000);
-
-function rewardTimer() {
-    if (!rTargetTime) return;
-
-    var now = new Date().getTime();
-    var t = rTargetTime - now;
+// Función para actualizar la cuenta atrás
+function updateTimer() {
+    const now = new Date().getTime();
+    const nextTargetTime = calculateNextTargetTime(now);
+    let t = nextTargetTime - now;
 
     if (t <= 0) {
-        // Manejo de la expiración de la cuenta atrás
-        t = 0;
+        t = oneDayInMillis;
     }
 
-    var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
-    var seconds = Math.floor((t % (1000 * 60)) / 1000);
+    const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0'));
+    const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0'));
+    const seconds = String(Math.floor((t % (1000 * 60)) / 1000).toString().padStart(2, '0'));
 
-    if (hours.toString().length == 1) hours = "0" + hours;
-    if (minutes.toString().length == 1) minutes = "0" + minutes;
-    if (seconds.toString().length == 1) seconds = "0" + seconds;
+    const timeString = `${hours} : ${minutes} : ${seconds}`;
 
     if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        document.querySelector('.day-end-in-mb').innerHTML = `${hours} : ${minutes} : ${seconds}`;
+        document.querySelector('.day-end-in-mb').textContent = timeString;
     } else {
-        document.querySelector('.day-end-in').innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
+        document.querySelector('.day-end-in').textContent = `Day Ends In: ${timeString}`;
     }
 }
+
+// Actualizar el temporizador cada segundo
+setInterval(updateTimer, 1000);
+
+// Llamar inmediatamente a updateTimer para evitar retraso en la primera ejecución
+updateTimer();
 
 
 

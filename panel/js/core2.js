@@ -1932,8 +1932,7 @@ function validateAddress(address) {
 
 
 
-let rTargetTime
-getTimer()
+let rTargetTime = null;
 
 function getTimer() {
     let xmlhttp_gu = new XMLHttpRequest();
@@ -1945,38 +1944,47 @@ function getTimer() {
         if (xmlhttp_gu.readyState !== 4 || xmlhttp_gu.status !== 200) return;
         if (xmlhttp_gu.responseText.length < 1) return;
 
-        rTargetTime = xmlhttp_gu.responseText
+        // Asegúrate de que la respuesta sea un número válido
+        rTargetTime = parseInt(xmlhttp_gu.responseText, 10);
+        if (isNaN(rTargetTime)) {
+            console.error("Invalid target time received:", xmlhttp_gu.responseText);
+            rTargetTime = null;
+        }
     }
 }
 
 setInterval(() => {
-    getTimer()
-}, 1000 * 60 * 5)
+    getTimer();
+}, 1000 * 60 * 5);
 
 setInterval(() => {
-    rewardTimer()
-}, 1000)
+    rewardTimer();
+}, 1000);
 
 function rewardTimer() {
-    if (!rTargetTime) return
+    if (!rTargetTime) return;
 
-    var now = new Date().getTime()
-    var t = rTargetTime - now
-    var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60))
-    var seconds = Math.floor((t % (1000 * 60)) / 1000)
+    var now = new Date().getTime();
+    var t = rTargetTime - now;
 
-    if (hours.toString().length == 1) hours = "0" + hours
-    if (minutes.toString().length == 1) minutes = "0" + minutes
-    if (seconds.toString().length == 1) seconds = "0" + seconds
-
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        $('.day-end-in-mb')[0].innerHTML = `${hours} : ${minutes} : ${seconds}`
-    } else {
-        $('.day-end-in')[0].innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`
+    if (t <= 0) {
+        // Manejo de la expiración de la cuenta atrás
+        t = 0;
     }
 
-	
+    var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((t % (1000 * 60)) / 1000);
+
+    if (hours.toString().length == 1) hours = "0" + hours;
+    if (minutes.toString().length == 1) minutes = "0" + minutes;
+    if (seconds.toString().length == 1) seconds = "0" + seconds;
+
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        document.querySelector('.day-end-in-mb').innerHTML = `${hours} : ${minutes} : ${seconds}`;
+    } else {
+        document.querySelector('.day-end-in').innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
+    }
 }
 
 

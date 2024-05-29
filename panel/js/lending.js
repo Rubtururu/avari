@@ -544,11 +544,11 @@ function refreshGlobalData() {
         $('.gd-32')[0].innerHTML = parseInt(res)
     })
     
-    // mainContract.methods.overall_collectedBonusTokens().call({
-    //     shouldPollResponse: true,
-    // }).then(res => {
-    //     $('.gd-33')[0].innerHTML = (parseInt(res)/1e18).toFixed(2)
-    // })
+     mainContract.methods.overall_collectedBonusTokens().call({
+         shouldPollResponse: true,
+     }).then(res => {
+         $('.gd-33')[0].innerHTML = (parseInt(res)/1e18).toFixed(2)
+     })
         
     mainContract.methods.totalStakeTradeAmount(user.address).call({
         shouldPollResponse: true,
@@ -556,11 +556,11 @@ function refreshGlobalData() {
         $('.user-data-3')[0].value = (parseInt(res)/1e18).toFixed(2)
     })
 
-    // mainContract.methods.mapMemberLobby_overallData(user.address).call({
-    //     shouldPollResponse: true,
-    // }).then(res => {
-    //     $('.user-data-4')[0].value = (parseInt(res.overall_collectedDivs)/1e18).toFixed(4)
-    // })
+     mainContract.methods.mapMemberLobby_overallData(user.address).call({
+         shouldPollResponse: true,
+     }).then(res => {
+         $('.user-data-4')[0].value = (parseInt(res.overall_collectedDivs)/1e18).toFixed(4)
+     })
     
     mainContract.methods.referrerBonusesPaid(user.address).call({
         shouldPollResponse: true,

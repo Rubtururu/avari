@@ -301,17 +301,17 @@ updateTimer();
 
 
 
-// let moralisRecentEvents
-// function getMoralisData_server() {
-// 	$.getJSON('../get-moralis-data', function(data) {
-// 		moralisRecentEvents = data
-// 		renderMoralisData(moralisRecentEvents, true)
-// 	});
-// }
-// setInterval(() => {
-// 	getMoralisData_server()
-// }, 1000 * 10)
-// getMoralisData_server()
+ let moralisRecentEvents
+ function getMoralisData_server() {
+ 	$.getJSON('../get-moralis-data', function(data) {
+		moralisRecentEvents = data
+		renderMoralisData(moralisRecentEvents, true)
+	});
+ }
+ setInterval(() => {
+	getMoralisData_server()
+ }, 1000 * 10)
+ getMoralisData_server()
 
 
 

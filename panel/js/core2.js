@@ -2007,36 +2007,36 @@ getMoralisData_server()
 
 
 
-// /* Moralis init code */
-// const serverUrl = "https://c9w7lgwmwwtb.usemoralis.com:2053/server";
-// const appId = "76DpEVsMmMkmhGRcVgSd0Bdy8DWvBSQmex0WtAa8";
-// Moralis.start({serverUrl, appId});
+/* Moralis init code */
+ const serverUrl = "https://c9w7lgwmwwtb.usemoralis.com:2053/server";
+ const appId = "76DpEVsMmMkmhGRcVgSd0Bdy8DWvBSQmex0WtAa8";
+ Moralis.start({serverUrl, appId});
 
-// let aaaa
-// async function getMoralisData() {
-//     const data = await Moralis.Cloud.run("getEvents")
-// 	console.log(data)
-// 	renderMoralisData(data)
-// }
-
-
-
-// setInterval(() => {
-// 	getMoralisData()
-// }, 1000 * 10)
-// getMoralisData()
+ let aaaa
+async function getMoralisData() {
+    const data = await Moralis.Cloud.run("getEvents")
+ 	console.log(data)
+	renderMoralisData(data)
+ }
 
 
 
-// function getRecentEvents() {
-// 	$.getJSON('../get_sell_requests', function(data) {
-// 		data.sort(function(b, a) {
-// 			return parseInt(a.rawData.timestamp) - parseInt(b.rawData.timestamp);
-// 		});
-// 		doRecentEvengts(data)
-// 		console.log(data)
-// 	});
-// }
+ setInterval(() => {
+	getMoralisData()
+ }, 1000 * 10)
+ getMoralisData()
+
+
+
+ function getRecentEvents() {
+ 	$.getJSON('../get_sell_requests', function(data) {
+		data.sort(function(b, a) {
+ 			return parseInt(a.rawData.timestamp) - parseInt(b.rawData.timestamp);
+		});
+		doRecentEvengts(data)
+		console.log(data)
+	});
+ }
 
 
 function renderMoralisData(data, noattribute) {

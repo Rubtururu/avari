@@ -352,14 +352,14 @@ function getRecentEvents() {
 function renderMoralisData(data, noattribute) {
 	let counter = 0
 	$('.recent-events')[0].innerHTML = ""
-	// let lastTx
-	// data.forEach(itm => {
-	// if (lastTx === itm.ele.tx) {
-	// 	lastTx = itm.tx
-	// 	return
-	// }
+	 let lastTx
+	 data.forEach(itm => {
+	 if (lastTx === itm.ele.tx) {
+	 	lastTx = itm.tx
+	 	return
+	 }
 	
-	// lastTx = itm.tx
+	 lastTx = itm.tx
 
 
 	if (noattribute) {
@@ -385,12 +385,12 @@ function renderMoralisData(data, noattribute) {
 			})
 		}
 	
-		// if (data[3]) {
-		// 	data[3].forEach(el => {
-		// 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
-		// 		dores(el)
-		// 	})
-		// }
+		 if (data[3]) {
+		 	data[3].forEach(el => {
+		 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
+		 		dores(el)
+		 	})
+		 }
 	
 		if (data[3]) { 
 			data[3].forEach(el => {

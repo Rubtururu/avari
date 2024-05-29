@@ -452,96 +452,96 @@ function renderMoralisData(data, noattribute) {
 			">${timeSince(parseInt(el.attributes.timestamp) * 1000)} ago</div></div>`
 		}
 	 }
-	// else{
-	// 	let txt
-	// 	if (data[0]) {
-	// 		data[0].forEach(el => {
-	// 			txt = `Stake Started: ${parseInt(el.attributes.rawAmount) / 1e18} AVC for ${el.attributes.duration} days`
-	// 			dores(el)
-	// 		})
-	// 	}
+	 else{
+	 	let txt
+	 	if (data[0]) {
+	 		data[0].forEach(el => {
+	 			txt = `Stake Started: ${parseInt(el.attributes.rawAmount) / 1e18} AVC for ${el.attributes.duration} days`
+	 			dores(el)
+	 		})
+	 	}
 	
-	// 	if (data[1]) {
-	// 		data[1].forEach(el => {
-	// 			txt = `Stake Collected: ${(parseInt(el.attributes.rawAmount) / 1e18).toFixed(5)} BNB`
-	// 			dores(el)
-	// 		})
-	// 	}
+	 	if (data[1]) {
+	 		data[1].forEach(el => {
+				txt = `Stake Collected: ${(parseInt(el.attributes.rawAmount) / 1e18).toFixed(5)} BNB`
+	 			dores(el)
+			})
+	 	}
 	
-	// 	if (data[2]) {
-	// 		data[2].forEach(el => {
-	// 			txt = `Auction Entered:<br> ${parseInt(el.attributes.rawAmount) / 1e18} BNB`
-	// 			dores(el)
-	// 		})
-	// 	}
+	 	if (data[2]) {
+	 		data[2].forEach(el => {
+				txt = `Auction Entered:<br> ${parseInt(el.attributes.rawAmount) / 1e18} BNB`
+	 			dores(el)
+	 		})
+	 	}
 	
-	// 	// if (data[3]) {
-	// 	// 	data[3].forEach(el => {
-	// 	// 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
-	// 	// 		dores(el)
-	// 	// 	})
-	// 	// }
+	 	 if (data[3]) {
+		 	data[3].forEach(el => {
+		 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
+			dores(el)
+	 	})
+	 }
 	
-	// 	if (data[3]) {
-	// 		data[3].forEach(el => {
-	// 			counter++
-	// 			if (counter < 15) {
-	// 				txt = `${parseInt(el.attributes.rawAmount) / 1e18} AVC Stake sell request for ${parseInt(el.attributes.price) / 1e18} BNB`
-	// 				dores(el)
-	// 			}
-	// 		})
-	// 	}
+	 	if (data[3]) {
+			data[3].forEach(el => {
+				counter++
+				if (counter < 15) {
+					txt = `${parseInt(el.attributes.rawAmount) / 1e18} AVC Stake sell request for ${parseInt(el.attributes.price) / 1e18} BNB`
+					dores(el)
+ 			}
+			})
+		}
 	
-	// 	if (data[4]) {
-	// 		data[4].forEach(el => {
-	// 			txt = `${parseInt(el.attributes.rawAmount) / 1e18} BNB Loan request for ${parseInt(el.attributes.duration)} Days`
-	// 			dores(el)
-	// 		})
-	// 	}
+		if (data[4]) {
+			data[4].forEach(el => {
+				txt = `${parseInt(el.attributes.rawAmount) / 1e18} BNB Loan request for ${parseInt(el.attributes.duration)} Days`
+				dores(el)
+			})
+	 	}
 	
 			
-	// 	function dores(el) {
-	// 		let p22 = el.attributes.addr.slice(42 - 5)
+	 	function dores(el) {
+	 		let p22 = el.attributes.addr.slice(42 - 5)
 	
-	// 		$('.recent-events')[0].innerHTML += 
-	// 			`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://bscscan.com/tx/${el.attributes.transaction_hash}')" 
-	// 			style="background-color: #2e8b90;
-	// 			cursor: pointer;
-	// 			margin: 6px;
-	// 			border-radius: 3px;
-	// 			height: auto;
-	// 			color: #ffffffb8;
-	// 			text-align: center;
-	// 			margin: 8px;
+	 		$('.recent-events')[0].innerHTML += 
+	 			`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://bscscan.com/tx/${el.attributes.transaction_hash}')" 
+	 			style="background-color: #2e8b90;
+	 			cursor: pointer;
+	 			margin: 6px;
+	 			border-radius: 3px;
+	 			height: auto;
+	 			color: #ffffffb8;
+	 			text-align: center;
+	 			margin: 8px;
 				
-	// 		"><div style="
-	// 		background-color: #267579;
-	// 		border-radius: 3px;
-	// 		height: 20px;
-	// 		color: #ffffff4f;
-	// 		text-align: center;
-	// 		font-weight: 900;
-	// 		font-family: 'Montserrat-m1'
-	// 		">${el.attributes.addr.slice(0, 5) + "..." + p22}</div><div style="
-	// 		border-radius: 3px;
-	// 		height: 20px;
-	// 		color: #ffffffb8;
-	// 		text-align: center;
-	// 		display: contents;
-	// 		font-size: inherit;
-	// 		font-weight: 400;
-	// 		font-family: 'Montserrat-m1';
-	// 		">${txt}</div><div style="
-	// 		font-size: 12px;
-	// 	border-radius: 3px;
-	// 	color: #ffffff52;
-	// 	text-align: right;
-	// 	margin-right: 3px;
-	// 	/* font-weight: 900; */
-	// 	font-family: 'Montserrat-m1';
-	// 		">${timeSince(parseInt(el.attributes.timestamp) * 1000)} ago</div></div>`
-	// 	}
-	// }
+	 		"><div style="
+	 		background-color: #267579;
+	 		border-radius: 3px;
+	 		height: 20px;
+	 		color: #ffffff4f;
+	 		text-align: center;
+	 		font-weight: 900;
+	 		font-family: 'Montserrat-m1'
+	 		">${el.attributes.addr.slice(0, 5) + "..." + p22}</div><div style="
+	 		border-radius: 3px;
+	 		height: 20px;
+	 		color: #ffffffb8;
+	 		text-align: center;
+	 		display: contents;
+	 		font-size: inherit;
+	 		font-weight: 400;
+	 		font-family: 'Montserrat-m1';
+	 		">${txt}</div><div style="
+	 		font-size: 12px;
+	 	border-radius: 3px;
+	 	color: #ffffff52;
+	 	text-align: right;
+	 	margin-right: 3px;
+	 	/* font-weight: 900; */
+	 	font-family: 'Montserrat-m1';
+	 		">${timeSince(parseInt(el.attributes.timestamp) * 1000)} ago</div></div>`
+	 	}
+	 }
 
 
 	var aT = []

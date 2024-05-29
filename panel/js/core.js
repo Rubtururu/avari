@@ -1940,62 +1940,56 @@ function validateAddress(address) {
 
 let rTargetTime = null;
 
-        // Función para obtener el tiempo objetivo del servidor
-        async function getTimer() {
-            try {
-                const response = await fetch('/get-next-round', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: 'address=' + encodeURIComponent(user.address)
-                });
+function getTimer() {
+    let xmlhttp_gu = new XMLHttpRequest();
+    xmlhttp_gu.open("POST", "/get-next-round", true);
+    xmlhttp_gu.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xmlhttp_gu.send('address=' + user.address);
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+    xmlhttp_gu.onreadystatechange = (e) => {
+        if (xmlhttp_gu.readyState !== 4 || xmlhttp_gu.status !== 200) return;
+        if (xmlhttp_gu.responseText.length < 1) return;
 
-                const responseText = await response.text();
-                const targetTime = parseInt(responseText, 10);
-
-                if (isNaN(targetTime)) {
-                    throw new Error('Invalid target time received');
-                }
-
-                rTargetTime = targetTime;
-            } catch (error) {
-                console.error('Failed to fetch target time:', error);
-            }
+        // Asegúrate de que la respuesta sea un número válido
+        rTargetTime = parseInt(xmlhttp_gu.responseText, 10);
+        if (isNaN(rTargetTime)) {
+            console.error("Invalid target time received:", xmlhttp_gu.responseText);
+            rTargetTime = null;
         }
+    }
+}
 
-        // Función para actualizar la cuenta atrás
-        function updateTimer() {
-            if (!rTargetTime) return;
+setInterval(() => {
+    getTimer();
+}, 1000 * 60 * 5);
 
-            const now = Date.now();
-            const t = rTargetTime - now;
+setInterval(() => {
+    rewardTimer();
+}, 1000);
 
-            const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0'));
-            const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0'));
-            const seconds = String(Math.floor((t % (1000 * 60)) / 1000).toString().padStart(2, '0'));
+function rewardTimer() {
+    if (!rTargetTime) return;
 
-            const timeString = `${hours} : ${minutes} : ${seconds}`;
+    var now = new Date().getTime();
+    var t = rTargetTime - now;
 
-            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                document.querySelector('.day-end-in-mb').textContent = timeString;
-            } else {
-                document.querySelector('.day-end-in').textContent = `Day Ends In: ${timeString}`;
-            }
-        }
+    if (t <= 0) {
+        // Manejo de la expiración de la cuenta atrás
+        t = 0;
+    }
 
-        // Obtener el tiempo objetivo al cargar la página
-        getTimer();
+    var hours = Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((t % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((t % (1000 * 60)) / 1000);
 
-        // Actualizar el tiempo objetivo cada 5 minutos
-        setInterval(getTimer, 1000 * 60 * 5);
+    if (hours.toString().length == 1) hours = "0" + hours;
+    if (minutes.toString().length == 1) minutes = "0" + minutes;
+    if (seconds.toString().length == 1) seconds = "0" + seconds;
 
-        // Actualizar el temporizador cada segundo
-        setInterval(updateTimer, 1000);
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        document.querySelector('.day-end-in-mb').innerHTML = `${hours} : ${minutes} : ${seconds}`;
+    } else {
+        document.querySelector('.day-end-in').innerHTML = `Day Ends In: ${hours} : ${minutes} : ${seconds}`;
     }
 }
 

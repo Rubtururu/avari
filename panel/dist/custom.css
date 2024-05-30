@@ -1,15 +1,17 @@
 /* Variables */
 :root {
-  --primary-color: #6a1b9a; /* Morado oscuro */
-  --secondary-color: #ab47bc; /* Morado claro */
-  --hover-primary: #8e24aa; /* Morado más claro */
-  --hover-secondary: #9127a3; /* Rosa */
-  --box-shadow-color: rgba(110, 0, 128, 0.36);
+  --primary-color: #1e88e5; /* Azul */
+  --secondary-color: #43a047; /* Verde */
+  --accent-color: #e53935; /* Rojo */
+  --hover-primary: #1565c0; /* Azul oscuro */
+  --hover-secondary: #388e3c; /* Verde oscuro */
+  --hover-accent: #c62828; /* Rojo oscuro */
+  --box-shadow-color: rgba(30, 136, 229, 0.36);
   --font-color: #ffffff;
   --font-family: 'Montserrat', sans-serif;
-  --background-light: #f3e5f5; /* Fondo claro */
-  --background-dark: #4a148c; /* Fondo oscuro */
-  --background-darker: #311b92; /* Fondo aún más oscuro */
+  --background-light: #e3f2fd; /* Fondo claro */
+  --background-dark: #1a237e; /* Fondo oscuro */
+  --background-darker: #0d47a1; /* Fondo aún más oscuro */
   --text-muted: rgba(255, 255, 255, 0.5);
 }
 
@@ -19,16 +21,16 @@
 }
 
 #sc-2::-webkit-scrollbar-track {
-  background: #e1bee7;
+  background: #e0f7fa;
 }
 
 #sc-2::-webkit-scrollbar-thumb {
-  background: #ba68c8;
+  background: #80deea;
   border-radius: 10px;
 }
 
 #sc-2::-webkit-scrollbar-thumb:hover {
-  background: #9c27b0;
+  background: #00acc1;
 }
 
 /* Copy Reference */
@@ -40,7 +42,7 @@
 
 .copy-ref:after {
   content: "";
-  background: #e1bee7;
+  background: #c8e6c9;
   display: block;
   position: absolute;
   opacity: 0;
@@ -57,28 +59,35 @@
 /* Grid */
 .grid-container {
   display: grid;
-  gap: 50px;
-  grid-template-columns: repeat(3, auto);
+  gap: 30px;
+  grid-template-columns: repeat(3, 1fr);
   background-color: var(--primary-color);
   padding: 10px;
 }
 
 .grid-item {
-  background-color: rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.8);
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 20px;
-  font-size: 30px;
+  font-size: 24px;
   text-align: center;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.grid-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Text */
 .t-pp {
   cursor: pointer;
   font-size: 16px;
-  color: #f3e5f5;
+  color: #ececec99;
   font-weight: 400;
   padding-top: 50px;
-  font-family: 'Montserrat-m1';
+  font-family: var(--font-family);
   margin-left: 25px;
   transition: color 0.5s;
 }
@@ -111,7 +120,7 @@
 
 /* Fonts */
 .dfont {
-  font-family: 'Montserrat-m1', var(--font-family);
+  font-family: var(--font-family);
   font-weight: 300;
 }
 
@@ -157,7 +166,7 @@
 }
 
 .tb-nactive-row {
-  background: #7e57c2;
+  background: #4caf50;
 }
 
 .tb-active-row {
@@ -165,15 +174,15 @@
 }
 
 .tb-active-row-2 {
-  background-color: #e8eaf6;
+  background-color: #e8f5e9;
 }
 
 .bg-theme-100 {
-  background-color: #ab47bc;
+  background-color: #4caf50;
 }
 
 .bg-theme-101 {
-  background-color: #f06292;
+  background-color: #f44336;
 }
 
 body {
@@ -182,6 +191,7 @@ body {
 
 input {
   background: var(--background-dark);
+  color: var(--font-color);
 }
 
 .input:focus,
@@ -214,10 +224,10 @@ input[type=number] {
 }
 
 .box-header {
-  border-bottom: 3px solid #4a148c !important;
-  background: #6a1b9a !important;
+  border-bottom: 3px solid var(--background-darker) !important;
+  background: var(--primary-color) !important;
   border-radius: 9px;
-  box-shadow: 0px 4px 8px #311b92 !important;
+  box-shadow: 0px 4px 8px var(--hover-primary) !important;
 }
 
 .box-body {
@@ -230,22 +240,22 @@ input[type=number] {
 }
 
 .item-slm {
-  background-color: #7e57c2 !important;
-  color: #e1bee7 !important;
+  background-color: #66bb6a !important;
+  color: #ffffff !important;
 }
 
 .item-sln {
-  background-color: #9575cd !important;
-  color: #d1c4e9 !important;
+  background-color: #81c784 !important;
+  color: #ffffff !important;
 }
 
 .ro-head {
-  background: #5e35b1 !important;
+  background: #43a047 !important;
   border: 0px !important;
 }
 
 .progress-b {
-  background: #ba68c8;
+  background: #00e676;
   height: 7px;
   border-radius: 50px;
   margin: 7px 8px 0px 7px;
@@ -255,8 +265,8 @@ input[type=number] {
 .progress-bn {
   height: 7px;
   border-radius: 50px;
-  background: linear-gradient(90deg, rgba(103, 32, 201, 1) 0%, rgba(206, 45, 222, 1) 100%);
-  box-shadow: 0px 0px 8px #8424cdb5;
+  background: linear-gradient(90deg, rgba(30, 136, 229, 1) 0%, rgba(67, 160, 71, 1) 100%);
+  box-shadow: 0px 0px 8px rgba(30, 136, 229, 0.5);
 }
 
 .highchart-credits {

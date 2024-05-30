@@ -301,412 +301,7 @@ updateTimer();
 
 
 
-// let moralisRecentEvents
-// function getMoralisData_server() {
-// 	$.getJSON('../get-moralis-data', function(data) {
-// 		moralisRecentEvents = data
-// 		renderMoralisData(moralisRecentEvents, true)
-// 	});
-// }
-// setInterval(() => {
-// 	getMoralisData_server()
-// }, 1000 * 10)
-// getMoralisData_server()
-
-
-
-
-
-// /* Moralis init code */
-// const serverUrl = "https://deep-index.moralis.io/api/v2.2/0xE3B00d52C86750524295F06Acd8F844623A3A954/logs";
-// const appId = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ijg4MWJhNjlhLTNlZjEtNDhjZS04YzRkLWFmNDg2ODMzNmNhOCIsIm9yZ0lkIjoiMzk0MjA5IiwidXNlcklkIjoiNDA1MDY5IiwidHlwZSI6IlBST0pFQ1QiLCJ0eXBlSWQiOiJlYzgyYzUxNy0xZjg5LTQ2NzctOGMwYS1lMDE2OTYxMmI2YzIiLCJpYXQiOjE3MTY5ODY4OTYsImV4cCI6NDg3Mjc0Njg5Nn0.142Iw1sOy-R4lvWQ-69_1RmmB2ZBnSf_zr4W9ebu2n8";
-// Moralis.start({serverUrl, appId});
-
-// let aaaa
-// async function getMoralisData() {
- //   const data = await Moralis.Cloud.run("getEvents")
-//	aaaa =data
-//	renderMoralisData(data, true)
-}
-
-
-
-setInterval(() => {
-	getMoralisData()
-}, 1000 * 10)
-getMoralisData()
-
-
-
-function getRecentEvents() {
-	$.getJSON('../get_sell_requests', function(data) {
-		data.sort(function(b, a) {
-			return parseInt(a.rawData.timestamp) - parseInt(b.rawData.timestamp);
-		});
-		doRecentEvengts(data)
-		console.log(data)
-	});
-}
-
-
-function renderMoralisData(data, noattribute) {
-	let counter = 0
-	$('.recent-events')[0].innerHTML = ""
-	// let lastTx
-	// data.forEach(itm => {
-	// if (lastTx === itm.ele.tx) {
-	// 	lastTx = itm.tx
-	// 	return
-	// }
-	
-	// lastTx = itm.tx
-
-
-	if (noattribute) {
-		let txt
-		if (data[0]) {
-			data[0].forEach(el => {
-				txt = `Stake Started: ${(parseInt(el.attributes.rawAmount)).toFixed(2) / 1e18} AVC for ${el.attributes.duration} days`
-				dores(el)
-			})
-		}
-	
-		if (data[1]) {
-			data[1].forEach(el => {
-				txt = `Stake Collected: ${(parseInt(el.attributes.rawAmount) / 1e18).toFixed(5)} BNB`
-				dores(el)
-			})
-		}
-	
-		if (data[2]) {
-			data[2].forEach(el => {
-				txt = `Auction Entered:<br> ${parseInt(el.attributes.rawAmount) / 1e18} BNB`
-				dores(el)
-			})
-		}
-	
-		// if (data[3]) {
-		// 	data[3].forEach(el => {
-		// 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
-		// 		dores(el)
-		// 	})
-		// }
-	
-		if (data[3]) { 
-			data[3].forEach(el => {
-				counter++
-				if (counter < 15) {
-					txt = `${parseInt(el.attributes.rawAmount) / 1e18} AVC Stake sell request for ${parseInt(el.attributes.price) / 1e18} BNB`
-					dores(el)
-				}
-			})
-		}
-	
-		if (data[4]) {
-			data[4].forEach(el => {
-				txt = `${parseInt(el.attributes.rawAmount) / 1e18} BNB Loan request for ${parseInt(el.attributes.duration)} Days`
-				dores(el)
-			})
-		}
-	
-			
-		function dores(el) {
-			let p22 = el.attributes.addr.slice(42 - 5)
-	
-			$('.recent-events')[0].innerHTML += 
-				`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://bscscan.com/tx/${el.attributes.transaction_hash}')" 
-				style="background-color: #2e8b90;
-				cursor: pointer;
-				margin: 6px;
-				border-radius: 3px;
-				height: auto;
-				color: #ffffffb8;
-				text-align: center;
-				margin: 8px;
-				
-			"><div style="
-			background-color: #267579;
-			border-radius: 3px;
-			height: 20px;
-			color: #ffffff4f;
-			text-align: center;
-			font-weight: 900;
-			font-family: 'Montserrat-m1'
-			">${el.attributes.addr.slice(0, 5) + "..." + p22}</div><div style="
-			border-radius: 3px;
-			height: 20px;
-			color: #ffffffb8;
-			text-align: center;
-			display: contents;
-			font-size: inherit;
-			font-weight: 400;
-			font-family: 'Montserrat-m1';
-			">${txt}</div><div style="
-			font-size: 12px;
-		border-radius: 3px;
-		color: #ffffff52;
-		text-align: right;
-		margin-right: 3px;
-		/* font-weight: 900; */
-		font-family: 'Montserrat-m1';
-			">${timeSince(parseInt(el.attributes.timestamp) * 1000)} ago</div></div>`
-		}
-	 }
-	// else{
-	// 	let txt
-	// 	if (data[0]) {
-	// 		data[0].forEach(el => {
-	// 			txt = `Stake Started: ${parseInt(el.attributes.rawAmount) / 1e18} AVC for ${el.attributes.duration} days`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-	// 	if (data[1]) {
-	// 		data[1].forEach(el => {
-	// 			txt = `Stake Collected: ${(parseInt(el.attributes.rawAmount) / 1e18).toFixed(5)} BNB`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-	// 	if (data[2]) {
-	// 		data[2].forEach(el => {
-	// 			txt = `Auction Entered:<br> ${parseInt(el.attributes.rawAmount) / 1e18} BNB`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-	// 	// if (data[3]) {
-	// 	// 	data[3].forEach(el => {
-	// 	// 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
-	// 	// 		dores(el)
-	// 	// 	})
-	// 	// }
-	
-	// 	if (data[3]) {
-	// 		data[3].forEach(el => {
-	// 			counter++
-	// 			if (counter < 15) {
-	// 				txt = `${parseInt(el.attributes.rawAmount) / 1e18} AVC Stake sell request for ${parseInt(el.attributes.price) / 1e18} BNB`
-	// 				dores(el)
-	// 			}
-	// 		})
-	// 	}
-	
-	// 	if (data[4]) {
-	// 		data[4].forEach(el => {
-	// 			txt = `${parseInt(el.attributes.rawAmount) / 1e18} BNB Loan request for ${parseInt(el.attributes.duration)} Days`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-			
-	// 	function dores(el) {
-	// 		let p22 = el.attributes.addr.slice(42 - 5)
-	
-	// 		$('.recent-events')[0].innerHTML += 
-	// 			`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://bscscan.com/tx/${el.attributes.transaction_hash}')" 
-	// 			style="background-color: #2e8b90;
-	// 			cursor: pointer;
-	// 			margin: 6px;
-	// 			border-radius: 3px;
-	// 			height: auto;
-	// 			color: #ffffffb8;
-	// 			text-align: center;
-	// 			margin: 8px;
-				
-	// 		"><div style="
-	// 		background-color: #267579;
-	// 		border-radius: 3px;
-	// 		height: 20px;
-	// 		color: #ffffff4f;
-	// 		text-align: center;
-	// 		font-weight: 900;
-	// 		font-family: 'Montserrat-m1'
-	// 		">${el.attributes.addr.slice(0, 5) + "..." + p22}</div><div style="
-	// 		border-radius: 3px;
-	// 		height: 20px;
-	// 		color: #ffffffb8;
-	// 		text-align: center;
-	// 		display: contents;
-	// 		font-size: inherit;
-	// 		font-weight: 400;
-	// 		font-family: 'Montserrat-m1';
-	// 		">${txt}</div><div style="
-	// 		font-size: 12px;
-	// 	border-radius: 3px;
-	// 	color: #ffffff52;
-	// 	text-align: right;
-	// 	margin-right: 3px;
-	// 	/* font-weight: 900; */
-	// 	font-family: 'Montserrat-m1';
-	// 		">${timeSince(parseInt(el.attributes.timestamp) * 1000)} ago</div></div>`
-	// 	}
-	// }
-
-
-	var aT = []
-	for (var i = 0 ; i <= $('.recent-events')[0].children.length ; i++) {
-		aT.push($('.recent-events')[0].children[i])
-	}
-
-	aT.sort(function(b, a) {
-		return parseInt(a.id) - parseInt(b.id);
-	});
-
-	$('.recent-events')[0].innerHTML = ""
-
-	for (var i = 0 ; i <= aT.length ; i++) { 
-		if (aT[i]) $('.recent-events')[0].appendChild(aT[i]) 
-	}
-}
-
-
-
-
-
-
-function timeSince(date) {
-	var seconds = Math.floor((new Date() - date) / 1000);
-	var interval = seconds / 31536000;
-  
-	if (interval > 1) {
-	  return Math.floor(interval) + " year/s";
-	}
-	interval = seconds / 2592000;
-	if (interval > 1) {
-	  return Math.floor(interval) + " month/s";
-	}
-	interval = seconds / 86400;
-	if (interval > 1) {
-	  return Math.floor(interval) + " day/s";
-	}
-	interval = seconds / 3600;
-	if (interval > 1) {
-	  return Math.floor(interval) + " hour/s";
-	}
-	interval = seconds / 60;
-	if (interval > 1) {
-	  return Math.floor(interval) + " minute/s";
-	}
-	return Math.floor(seconds) + " second/s";
-}
-
-
-
-
-
-
-function openModal3() {
-
-    $('.modal3')[0].style.marginTop = "auto"
-    $('.modal3')[0].style.marginLeft = "auto"
-
-    $('.modal3')[0].style.visibility = "visible"
-    $('.modal3')[0].style.opacity = "1"
-}
-
-function closeModal3() {
-    $('.modal3')[0].style.marginTop = "-10000px"
-    $('.modal3')[0].style.marginLeft = "-10000px"
-
-    $('.modal3')[0].style.visibility = "invisible"
-    $('.modal3')[0].style.opacity = "0"
-}
-
-function TransferAVCTokens() {
-	let toAddress = $('.inp-tra-2')[0].value
-    let amount = $('.inp-tra-1')[0].value
-	amount = web3.utils.toWei(amount,'ether');
-
-    if (!amount || !mainContract) return
-
-	
-
-    mainContract.methods.transfer(toAddress, amount).send({
-        from: user.address,
-        shouldPollResponse: false
-    }).then(res => {
-		doAlert(`Successfully Sent.`, 3)
-		closeModal3()
-    }).catch(err => {
-        doAlert("Something went wrong!", 2)
-    }).finally(res => {
-		closeModal3()
-    })
-}
-
-
-
-
-
-function copyreflink() {
-	
-	var linkk = `https://avaricetoken.io/?r=${user.address}`;
-	navigator.clipboard.writeText(linkk).then(function() {
-	  console.log('Async: Copying to clipboard was successful!');
-	}, function(err) {
-	  console.error('Async: Could not copy text: ', err);
-	});
-}
-
-function lobbyPoolclc2(day) {
-    let starter = 3e6 //- (3e6 * 0.5 / 100)
-    let toreturn
-
-    for (var i = 0 ; i < day; i++) {
-        let beshown = starter
-        starter -= starter *5/1000
-        toreturn = beshown.toFixed(0)
-    }
-
-    return toreturn
-}
-
-let dayEnteries = []
-
-function getDayEntery2(_day) {
-    mainContract.methods.lobbyEntry(_day).call({
-        shouldPollResponse: true
-    }).then(res => {
-		dayEnteries[_day] = parseInt(res) / 1e18
-    })
-}
-
-function averagePriceCalc() {
-	dayEnteries = []
-	//let duration = 3
-	for(var i = 0 ; i < 3 ; i++) {
-		getDayEntery2(currentDay - (i+1))
-	}
-
-	whenStartClcAvg()
-}
-
-function whenStartClcAvg() {
-	setTimeout(() => {
-		if (dayEnteries.length == currentDay) {
-			clcPrice()
-		}else{
-			whenStartClcAvg()
-		}
-	}, 500)
-}
-
-let avgPrice
-
-function clcPrice() {
-	//let duration = 3
-	let fn
-
-	avgPrice =
-	dayEnteries[currentDay - 1] / lobbyPoolclc2((currentDay - 1) + 1) +
-	dayEnteries[currentDay - 2] / lobbyPoolclc2((currentDay - 2) + 1) +
-	dayEnteries[currentDay - 3] / lobbyPoolclc2((currentDay - 3) + 1)	
-
-	avgPrice /= 3
-}
-
-/ Función para obtener eventos recientes
+// Función para obtener eventos recientes
 async function getRecentEvents() {
     const latestBlock = await web3.eth.getBlockNumber();
     const events = await contract.getPastEvents('allEvents', {
@@ -829,4 +424,105 @@ function timeSince(date) {
 setInterval(getRecentEvents, 1000 * 10);
 getRecentEvents();
 
+// El resto de tu código
+function openModal3() {
+    $('.modal3')[0].style.marginTop = "auto"
+    $('.modal3')[0].style.marginLeft = "auto"
+
+    $('.modal3')[0].style.visibility = "visible"
+    $('.modal3')[0].style.opacity = "1"
+}
+
+function closeModal3() {
+    $('.modal3')[0].style.marginTop = "-10000px"
+    $('.modal3')[0].style.marginLeft = "-10000px"
+
+    $('.modal3')[0].style.visibility = "invisible"
+    $('.modal3')[0].style.opacity = "0"
+}
+
+function TransferAVCTokens() {
+    let toAddress = $('.inp-tra-2')[0].value;
+    let amount = $('.inp-tra-1')[0].value;
+    amount = web3.utils.toWei(amount, 'ether');
+
+    if (!amount || !mainContract) return;
+
+    mainContract.methods.transfer(toAddress, amount).send({
+        from: user.address,
+        shouldPollResponse: false
+    }).then(res => {
+        doAlert(`Successfully Sent.`, 3);
+        closeModal3();
+    }).catch(err => {
+        doAlert("Something went wrong!", 2);
+    }).finally(res => {
+        closeModal3();
+    });
+}
+
+function copyreflink() {
+    var linkk = `https://avaricetoken.io/?r=${user.address}`;
+    navigator.clipboard.writeText(linkk).then(function() {
+        console.log('Async: Copying to clipboard was successful!');
+    }, function(err) {
+        console.error('Async: Could not copy text: ', err);
+    });
+}
+
+function lobbyPoolclc2(day) {
+    let starter = 3e6; //- (3e6 * 0.5 / 100)
+    let toreturn;
+
+    for (var i = 0; i < day; i++) {
+        let beshown = starter;
+        starter -= starter * 5 / 1000;
+        toreturn = beshown.toFixed(0);
+    }
+
+    return toreturn;
+}
+
+let dayEnteries = [];
+
+function getDayEntery2(_day) {
+    mainContract.methods.lobbyEntry(_day).call({
+        shouldPollResponse: true
+    }).then(res => {
+        dayEnteries[_day] = parseInt(res) / 1e18;
+    });
+}
+
+function averagePriceCalc() {
+    dayEnteries = [];
+    //let duration = 3
+    for (var i = 0; i < 3; i++) {
+        getDayEntery2(currentDay - (i + 1));
+    }
+
+    whenStartClcAvg();
+}
+
+function whenStartClcAvg() {
+    setTimeout(() => {
+        if (dayEnteries.length == currentDay) {
+            clcPrice();
+        } else {
+            whenStartClcAvg();
+        }
+    }, 500);
+}
+
+let avgPrice;
+
+function clcPrice() {
+    //let duration = 3
+    let fn;
+
+    avgPrice =
+        dayEnteries[currentDay - 1] / lobbyPoolclc2((currentDay - 1) + 1) +
+        dayEnteries[currentDay - 2] / lobbyPoolclc2((currentDay - 2) + 1) +
+        dayEnteries[currentDay - 3] / lobbyPoolclc2((currentDay - 3) + 1);
+
+    avgPrice /= 3;
 }

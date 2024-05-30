@@ -303,14 +303,24 @@ updateTimer();
 
 // Función para obtener eventos recientes
 async function getRecentEvents() {
-    const latestBlock = await web3.eth.getBlockNumber();
-    const events = await contract.getPastEvents('allEvents', {
-        fromBlock: latestBlock - 1000,  // Ajustar según sea necesario
-        toBlock: 'latest'
-    });
+    try {
+        const latestBlock = await web3.eth.getBlockNumber();
+        console.log("Latest Block: ", latestBlock);
 
-    renderEvents(events);
+        const events = await contract.getPastEvents('allEvents', {
+            fromBlock: latestBlock - 1000,  // Ajustar según sea necesario
+            toBlock: 'latest'
+        });
+
+        console.log("Events: ", events);
+        renderEvents(events);
+    } catch (error) {
+        console.error("Error fetching events: ", error);
+    }
 }
+
+// Llamar a la función para obtener eventos recientes
+getRecentEvents();
 
 // Renderizar eventos en la interfaz
 function renderEvents(events) {
@@ -526,3 +536,4 @@ function clcPrice() {
 
     avgPrice /= 3;
 }
+

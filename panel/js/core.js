@@ -319,7 +319,7 @@ updateTimer();
 
 /* Moralis init code */
 const serverUrl = "https://auctionstake-xxhes5os6a-uc.a.run.app";
-const appId = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ijg4MWJhNjlhLTNlZjEtNDhjZS04YzRkLWFmNDg2ODMzNmNhOCIsIm9yZ0lkIjoiMzk0MjA5IiwidXNlcklkIjoiNDA1MDY5IiwidHlwZSI6IlBST0pFQ1QiLCJ0eXBlSWQiOiJlYzgyYzUxNy0xZjg5LTQ2NzctOGMwYS1lMDE2OTYxMmI2YzIiLCJpYXQiOjE3MTY5ODY4OTYsImV4cCI6NDg3Mjc0Njg5Nn0.142Iw1sOy-R4lvWQ-69_1RmmB2ZBnSf_zr4W9ebu2n8";
+const appId = "ae56d858-4d57-4e08-8e66-0af14ff466d6";
 Moralis.start({serverUrl, appId});
 
 let aaaa

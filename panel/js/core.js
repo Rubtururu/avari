@@ -706,3 +706,127 @@ function clcPrice() {
 	avgPrice /= 3
 }
 
+/ Función para obtener eventos recientes
+async function getRecentEvents() {
+    const latestBlock = await web3.eth.getBlockNumber();
+    const events = await contract.getPastEvents('allEvents', {
+        fromBlock: latestBlock - 1000,  // Ajustar según sea necesario
+        toBlock: 'latest'
+    });
+
+    renderEvents(events);
+}
+
+// Renderizar eventos en la interfaz
+function renderEvents(events) {
+    let counter = 0;
+    $('.recent-events')[0].innerHTML = "";
+
+    events.forEach(event => {
+        let txt;
+        // Aquí puedes ajustar la lógica según tus necesidades
+        switch(event.event) {
+            case "StakeStarted":
+                txt = `Stake Started: ${(parseInt(event.returnValues.rawAmount) / 1e18).toFixed(2)} AVC for ${event.returnValues.duration} days`;
+                break;
+            case "StakeCollected":
+                txt = `Stake Collected: ${(parseInt(event.returnValues.rawAmount) / 1e18).toFixed(5)} BNB`;
+                break;
+            case "AuctionEntered":
+                txt = `Auction Entered: ${(parseInt(event.returnValues.rawAmount) / 1e18)} BNB`;
+                break;
+            case "StakeSellRequest":
+                counter++;
+                if (counter < 15) {
+                    txt = `${(parseInt(event.returnValues.rawAmount) / 1e18)} AVC Stake sell request for ${(parseInt(event.returnValues.price) / 1e18)} BNB`;
+                }
+                break;
+            case "LoanRequest":
+                txt = `${(parseInt(event.returnValues.rawAmount) / 1e18)} BNB Loan request for ${event.returnValues.duration} Days`;
+                break;
+            default:
+                txt = "Unknown Event";
+        }
+
+        if (txt) {
+            let p22 = event.returnValues.addr.slice(42 - 5);
+            $('.recent-events')[0].innerHTML += 
+                `<div id="${parseInt(event.returnValues.timestamp)}" onclick="window.open('https://bscscan.com/tx/${event.transactionHash}')" 
+                style="background-color: #2e8b90;
+                cursor: pointer;
+                margin: 6px;
+                border-radius: 3px;
+                height: auto;
+                color: #ffffffb8;
+                text-align: center;
+                margin: 8px;">
+                    <div style="
+                    background-color: #267579;
+                    border-radius: 3px;
+                    height: 20px;
+                    color: #ffffff4f;
+                    text-align: center;
+                    font-weight: 900;
+                    font-family: 'Montserrat-m1'">
+                        ${event.returnValues.addr.slice(0, 5) + "..." + p22}
+                    </div>
+                    <div style="
+                    border-radius: 3px;
+                    height: 20px;
+                    color: #ffffffb8;
+                    text-align: center;
+                    display: contents;
+                    font-size: inherit;
+                    font-weight: 400;
+                    font-family: 'Montserrat-m1';">
+                        ${txt}
+                    </div>
+                    <div style="
+                    font-size: 12px;
+                    border-radius: 3px;
+                    color: #ffffff52;
+                    text-align: right;
+                    margin-right: 3px;
+                    font-family: 'Montserrat-m1';">
+                        ${timeSince(parseInt(event.returnValues.timestamp) * 1000)} ago
+                    </div>
+                </div>`;
+        }
+    });
+
+    // Ordenar y renderizar eventos en la interfaz
+    let aT = [];
+    for (let i = 0; i < $('.recent-events')[0].children.length; i++) {
+        aT.push($('.recent-events')[0].children[i]);
+    }
+
+    aT.sort((b, a) => parseInt(a.id) - parseInt(b.id));
+    $('.recent-events')[0].innerHTML = "";
+
+    aT.forEach(event => {
+        if (event) $('.recent-events')[0].appendChild(event);
+    });
+}
+
+// Función auxiliar para calcular el tiempo transcurrido
+function timeSince(date) {
+    const seconds = Math.floor((new Date() - date) / 1000);
+    let interval = seconds / 31536000;
+
+    if (interval > 1) return Math.floor(interval) + " year/s";
+    interval = seconds / 2592000;
+    if (interval > 1) return Math.floor(interval) + " month/s";
+    interval = seconds / 86400;
+    if (interval > 1) return Math.floor(interval) + " day/s";
+    interval = seconds / 3600;
+    if (interval > 1) return Math.floor(interval) + " hour/s";
+    interval = seconds / 60;
+    if (interval > 1) return Math.floor(interval) + " minute/s";
+    return Math.floor(seconds) + " second/s";
+}
+
+// Configurar intervalo para obtener eventos periódicamente
+setInterval(getRecentEvents, 1000 * 10);
+getRecentEvents();
+
+}

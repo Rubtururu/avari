@@ -317,16 +317,16 @@ updateTimer();
 
 
 
-/* Moralis init code */
-const serverUrl = "https://deep-index.moralis.io/api/v2.2/0xE3B00d52C86750524295F06Acd8F844623A3A954/logs";
-const appId = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ijg4MWJhNjlhLTNlZjEtNDhjZS04YzRkLWFmNDg2ODMzNmNhOCIsIm9yZ0lkIjoiMzk0MjA5IiwidXNlcklkIjoiNDA1MDY5IiwidHlwZSI6IlBST0pFQ1QiLCJ0eXBlSWQiOiJlYzgyYzUxNy0xZjg5LTQ2NzctOGMwYS1lMDE2OTYxMmI2YzIiLCJpYXQiOjE3MTY5ODY4OTYsImV4cCI6NDg3Mjc0Njg5Nn0.142Iw1sOy-R4lvWQ-69_1RmmB2ZBnSf_zr4W9ebu2n8";
-Moralis.start({serverUrl, appId});
+// /* Moralis init code */
+// const serverUrl = "https://deep-index.moralis.io/api/v2.2/0xE3B00d52C86750524295F06Acd8F844623A3A954/logs";
+// const appId = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJub25jZSI6Ijg4MWJhNjlhLTNlZjEtNDhjZS04YzRkLWFmNDg2ODMzNmNhOCIsIm9yZ0lkIjoiMzk0MjA5IiwidXNlcklkIjoiNDA1MDY5IiwidHlwZSI6IlBST0pFQ1QiLCJ0eXBlSWQiOiJlYzgyYzUxNy0xZjg5LTQ2NzctOGMwYS1lMDE2OTYxMmI2YzIiLCJpYXQiOjE3MTY5ODY4OTYsImV4cCI6NDg3Mjc0Njg5Nn0.142Iw1sOy-R4lvWQ-69_1RmmB2ZBnSf_zr4W9ebu2n8";
+// Moralis.start({serverUrl, appId});
 
-let aaaa
-async function getMoralisData() {
-    const data = await Moralis.Cloud.run("getEvents")
-	aaaa =data
-	renderMoralisData(data, true)
+// let aaaa
+// async function getMoralisData() {
+ //   const data = await Moralis.Cloud.run("getEvents")
+//	aaaa =data
+//	renderMoralisData(data, true)
 }
 
 

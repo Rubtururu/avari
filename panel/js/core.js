@@ -414,7 +414,7 @@ function renderMoralisData(data, noattribute) {
 			let p22 = el.attributes.addr.slice(42 - 5)
 	
 			$('.recent-events')[0].innerHTML += 
-				`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://testnet.bscscan.com//tx/${el.attributes.transaction_hash}')" 
+				`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://bscscan.com/tx/${el.attributes.transaction_hash}')" 
 				style="background-color: #2e8b90;
 				cursor: pointer;
 				margin: 6px;

@@ -1,4 +1,5 @@
 <?php
+header( "Access-Control-Allow-Origin: *" );
 $admin_email  = 'odesahouse@gmail.com';
 //$admin_email = "slivfor@gmail.com";
 $method = $_SERVER['REQUEST_METHOD'];

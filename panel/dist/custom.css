@@ -1,18 +1,18 @@
 /* Variables */
 :root {
-  --primary-color: #1e88e5; /* Azul */
-  --secondary-color: #43a047; /* Verde */
-  --accent-color: #e53935; /* Rojo */
-  --hover-primary: #1565c0; /* Azul oscuro */
-  --hover-secondary: #388e3c; /* Verde oscuro */
-  --hover-accent: #c62828; /* Rojo oscuro */
-  --box-shadow-color: rgba(30, 136, 229, 0.36);
-  --font-color: #ffffff;
-  --font-family: 'Montserrat', sans-serif;
-  --background-light: #2c3e50; /* Fondo claro */
-  --background-dark: #34495e; /* Fondo oscuro */
-  --background-darker: #2c3e50; /* Fondo aún más oscuro */
-  --text-muted: rgba(255, 255, 255, 0.5);
+  --primary-color: #3498db; /* Azul */
+  --secondary-color: #2ecc71; /* Verde */
+  --accent-color: #e74c3c; /* Rojo */
+  --hover-primary: #2980b9; /* Azul más oscuro */
+  --hover-secondary: #27ae60; /* Verde más oscuro */
+  --hover-accent: #c0392b; /* Rojo más oscuro */
+  --box-shadow-color: rgba(52, 152, 219, 0.36);
+  --font-color: #34495e;
+  --font-family: 'Roboto', sans-serif;
+  --background-light: #f9f9f9; /* Fondo claro */
+  --background-dark: #ecf0f1; /* Fondo oscuro */
+  --background-darker: #bdc3c7; /* Fondo aún más oscuro */
+  --text-muted: rgba(52, 73, 94, 0.5);
 }
 
 /* Scrollbar */
@@ -21,16 +21,16 @@
 }
 
 #sc-2::-webkit-scrollbar-track {
-  background: #34495e;
+  background: #f1f1f1;
 }
 
 #sc-2::-webkit-scrollbar-thumb {
-  background: #2c3e50;
+  background: #888;
   border-radius: 10px;
 }
 
 #sc-2::-webkit-scrollbar-thumb:hover {
-  background: #1f2d3d;
+  background: #555;
 }
 
 /* Copy Reference */
@@ -43,7 +43,7 @@
 
 .copy-ref:after {
   content: "";
-  background: #455a64;
+  background: #bdc3c7;
   display: block;
   position: absolute;
   opacity: 0;
@@ -67,8 +67,8 @@
 }
 
 .grid-item {
-  background-color: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  border: 1px solid #ddd;
   padding: 20px;
   font-size: 24px;
   text-align: center;
@@ -108,8 +108,8 @@
   cursor: pointer;
   background: linear-gradient(to bottom right, var(--primary-color) 0%, var(--secondary-color) 100%);
   box-shadow: 2px 4px 4px var(--box-shadow-color);
-  color: var(--font-color);
-  font-family: 'Montserrat-b1';
+  color: #fff;
+  font-family: 'Roboto', sans-serif;
   font-size: 16px;
   transition: all 0.3s ease;
 }
@@ -126,20 +126,10 @@
 }
 
 @font-face {
-  font-family: 'Montserrat-b2';
-  src: url(Montserrat-ExtraBold.ttf);
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: 'Montserrat-b1';
-  src: url(Montserrat-Bold.ttf);
-  font-weight: bold;
-}
-
-@font-face {
-  font-family: 'Montserrat-m1';
-  src: url(Montserrat-Medium.ttf);
+  font-family: 'Roboto';
+  src: url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+  font-weight: normal;
+  font-style: normal;
 }
 
 * {
@@ -167,7 +157,7 @@
 }
 
 .tb-nactive-row {
-  background: #4caf50;
+  background: #2ecc71;
 }
 
 .tb-active-row {
@@ -175,15 +165,15 @@
 }
 
 .tb-active-row-2 {
-  background-color: #e8f5e9;
+  background-color: #ecf0f1;
 }
 
 .bg-theme-100 {
-  background-color: #4caf50;
+  background-color: #2ecc71;
 }
 
 .bg-theme-101 {
-  background-color: #f44336;
+  background-color: #e74c3c;
 }
 
 body {
@@ -233,7 +223,7 @@ input[type=number] {
 }
 
 .box-body {
-  background: #455a64 !important;
+  background: #ffffff !important;
   border-radius: 7px !important;
 }
 
@@ -242,24 +232,24 @@ input[type=number] {
 }
 
 .item-slm {
-  background-color: #66bb6a !important;
+  background-color: #2ecc71 !important;
   color: #ffffff !important;
 }
 
 .item-sln {
-  background-color: #81c784 !important;
+  background-color: #3498db !important;
   color: #ffffff !important;
 }
 
 .ro-head {
-  background: #43a047 !important;
+  background: #e74c3c !important;
   border: 0px !important;
 }
 
 .progress-b {
-  background: #00e676;
+  background: #2ecc71;
   height: 7px;
-  border-radius:50px;
+  border-radius: 50px;
   margin: 7px 8px 0px 7px;
   width: 90%;
 }
@@ -267,12 +257,13 @@ input[type=number] {
 .progress-bn {
   height: 7px;
   border-radius: 50px;
-  background: linear-gradient(90deg, rgba(30, 136, 229, 1) 0%, rgba(67, 160, 71, 1) 100%);
-  box-shadow: 0px 0px 8px rgba(30, 136, 229, 0.5);
+  background: linear-gradient(90deg, rgba(52, 152, 219, 1) 0%, rgba(46, 204, 113, 1) 100%);
+  box-shadow: 0px 0px 8px rgba(46, 204, 113, 0.5);
 }
 
 .highchart-credits {
-  background: #2e2e49;
-  color: #2e2e49;
+  background: #ecf0f1;
+  color: #34495e;
 }
+
 

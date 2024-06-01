@@ -20,8 +20,6 @@ function setUpContracts() {
     contractLoaded()
     console.log("Contract Loaded")
 }
-// https://bsc-dataseed1.binance.org:443
-// https://data-seed-prebsc-1-s1.binance.org:8545"
 
 window.addEventListener('load', async () => {
     web3 = new Web3(new Web3.providers.HttpProvider("https://bsc-dataseed1.binance.org:443"));
@@ -30,7 +28,7 @@ window.addEventListener('load', async () => {
     user.address = accs[0]
     setUpContracts()
     setUpAccount()
-    console.log("conn", accs[0])
+    console.log("Connected", accs[0])
 
     web3.eth.net.getId()
         .then(netID => {
@@ -38,12 +36,9 @@ window.addEventListener('load', async () => {
         });
 
     try {
-        // ask user for permission
         await ethereum.enable();
-        // user approved permission
     } catch (error) {
-        // user rejected permission
-        console.log('user rejected permission');
+        console.log('User rejected permission');
     }
 
     function setUpAccount() {
@@ -105,7 +100,6 @@ function getCurrentDay() {
     }, 1000 * 60 * 5)
 }
 
-// get balance of user and set it on the header
 function getUserBalance() {
     mainContract.methods.balanceOf(user.address).call({
         shouldPollResponse: false
@@ -131,16 +125,16 @@ function abbreviate_number(_num, fixed) {
     let num = parseFloat(_num)
     if (num === null) {
         return null;
-    } // terminate early
+    }
     if (num === 0) {
         return '0';
-    } // terminate early
-    fixed = (!fixed || fixed < 0) ? 0 : fixed; // number of decimal places to show
-    var b = (num).toPrecision(2).split("e"), // get power
-        k = b.length === 1 ? 0 : Math.floor(Math.min(b[1].slice(1), 14) / 3), // floor at decimals, ceiling at trillions
-        c = k < 1 ? num.toFixed(0 + fixed) : (num / Math.pow(10, k * 3)).toFixed(1 + fixed), // divide by power
-        d = c < 0 ? c : Math.abs(c), // enforce -0 is 0
-        e = d + ['', 'K', 'M', 'B', 'T'][k]; // append power
+    }
+    fixed = (!fixed || fixed < 0) ? 0 : fixed;
+    var b = (num).toPrecision(2).split("e"),
+        k = b.length === 1 ? 0 : Math.floor(Math.min(b[1].slice(1), 14) / 3),
+        c = k < 1 ? num.toFixed(0 + fixed) : (num / Math.pow(10, k * 3)).toFixed(1 + fixed),
+        d = c < 0 ? c : Math.abs(c),
+        e = d + ['', 'K', 'M', 'B', 'T'][k];
 
     return e;
 }
@@ -252,7 +246,6 @@ function validateAddress(address) {
 const initialTargetTime = 1716791367;
 const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-// Función para actualizar la cuenta atrás
 function updateCountdown() {
     const now = new Date().getTime();
     const distance = initialTargetTime * 1000 - now;
@@ -269,17 +262,13 @@ function updateCountdown() {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    // Actualizar los elementos HTML
     document.getElementById("day").innerText = days;
     document.getElementById("hour").innerText = hours;
     document.getElementById("minute").innerText = minutes;
     document.getElementById("second").innerText = seconds;
 }
 
-// Actualizar la cuenta atrás cada segundo
 setInterval(updateCountdown, 1000);
-
-// Llamada inicial para establecer la cuenta atrás
 updateCountdown();
 
 async function getEvents() {
@@ -291,10 +280,33 @@ async function getEvents() {
 }
 
 function renderEvents(events) {
-    console.log("Events:", events);
-    // Lógica para mostrar eventos en la interfaz de usuario
+    const eventsContainer = document.getElementById('eventsContainer');
+    eventsContainer.innerHTML = '';
+
+    events.forEach(event => {
+        const eventElement = document.createElement('div');
+        eventElement.className = 'event';
+        eventElement.innerText = `Event: ${event.event}, Data: ${JSON.stringify(event.returnValues)}`;
+        eventsContainer.appendChild(eventElement);
+    });
 }
 
-// Llamada para obtener y renderizar eventos
-getEvents();
+async function getStakesForSale() {
+    const stakes = await mainContract.methods.getStakesForSale().call();
+    renderStakesForSale(stakes);
+}
 
+function renderStakesForSale(stakes) {
+    const stakesContainer = document.getElementById('stakesContainer');
+    stakesContainer.innerHTML = '';
+
+    stakes.forEach(stake => {
+        const stakeElement = document.createElement('div');
+        stakeElement.className = 'stake';
+        stakeElement.innerText = `Stake ID: ${stake.id}, Amount: ${stake.amount}`;
+        stakesContainer.appendChild(stakeElement);
+    });
+}
+
+getEvents();
+getStakesForSale();

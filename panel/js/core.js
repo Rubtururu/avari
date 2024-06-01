@@ -23,44 +23,40 @@ function setUpContracts() {
 // https://bsc-dataseed1.binance.org:443
 // https://data-seed-prebsc-1-s1.binance.org:8545"
 
-
 window.addEventListener('load', async () => {
-	
-	web3 = new Web3(new Web3.providers.HttpProvider("https://bsc-dataseed1.binance.org:443"));
-	web3.eth.setProvider(Web3.givenProvider);
-	let accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
-	user.address = accs[0]
-	setUpContracts()
-	setUpAccount()
-	console.log("conn", accs[0])
+    web3 = new Web3(new Web3.providers.HttpProvider("https://bsc-dataseed1.binance.org:443"));
+    web3.eth.setProvider(Web3.givenProvider);
+    let accs = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    user.address = accs[0]
+    setUpContracts()
+    setUpAccount()
+    console.log("conn", accs[0])
 
-	web3.eth.net.getId()
-	.then( netID => {
-		if(netID !== 56) alert("You are connected to a wrong network, please change to BSC network.")
-	});
+    web3.eth.net.getId()
+        .then(netID => {
+            if (netID !== 56) alert("You are connected to a wrong network, please change to BSC network.")
+        });
 
-	try {
-		// ask user for permission
-		await ethereum.enable();
-		// user approved permission
-	} catch (error) {
-		// user rejected permission
-		console.log('user rejected permission');
-	}
+    try {
+        // ask user for permission
+        await ethereum.enable();
+        // user approved permission
+    } catch (error) {
+        // user rejected permission
+        console.log('user rejected permission');
+    }
 
+    function setUpAccount() {
+        updateHeadAddress()
 
-	function setUpAccount() {
-		updateHeadAddress()
-		
-		if ($('.ref-link')[0]) $('.ref-link')[0].value = "https://avaricetoken.io/?ref=" + user.address
+        if ($('.ref-link')[0]) $('.ref-link')[0].value = "https://avaricetoken.io/?ref=" + user.address
 
-		if(typeof userAccConnected == "function") userAccConnected()
-	}
+        if (typeof userAccConnected == "function") userAccConnected()
+    }
 })
 
 function updateHeadAddress() {
     let p2 = user.address.slice(42 - 5)
-    // $('.my-acc-add')[1].innerHTML = user.address.slice(0, 5) + "..." + p2
     $('.c-square-span')[0].innerHTML = user.address.slice(0, 5) + "..." + p2
 }
 
@@ -77,12 +73,12 @@ function contractLoaded() {
     let intso = setInterval(() => {
         if (currentDay) {
             clearInterval(intso)
-			
-			if (typeof refreshGlobalData === "function") refreshGlobalData()
+
+            if (typeof refreshGlobalData === "function") refreshGlobalData()
             if (typeof run_Stake === "function") run_Stake()
             if (typeof run_Auction === "function") run_Auction()
             if (typeof run_Dividends === "function") run_Dividends()
-			averagePriceCalc()
+            averagePriceCalc()
         }
     }, 100)
 }
@@ -93,7 +89,6 @@ function getLobbyData() {
     }).then(res => {
         console.log(res)
     })
-
 }
 
 function getCurrentDay() {
@@ -116,7 +111,7 @@ function getUserBalance() {
         shouldPollResponse: false
     }).then(res => {
         user.balance = parseInt(res)
-        
+
         async function f() {
             let bnb_balance = await web3.eth.getBalance(user.address);
             user.balance_bnb = parseInt(bnb_balance)
@@ -253,456 +248,53 @@ function validateAddress(address) {
     return false;
 }
 
-
-
-
 // Fecha objetivo inicial en segundos desde Unix
 const initialTargetTime = 1716791367;
 const oneDayInMillis = 24 * 60 * 60 * 1000;
 
-// Función para calcular el próximo tiempo objetivo
-function calculateNextTargetTime(currentTime) {
-    const initialTargetDate = new Date(initialTargetTime * 1000);
-    const daysElapsed = Math.floor((currentTime - initialTargetDate.getTime()) / oneDayInMillis);
-    const nextTargetDate = new Date(initialTargetDate.getTime() + ((daysElapsed + 1) * oneDayInMillis));
-    return nextTargetDate.getTime();
-}
-
 // Función para actualizar la cuenta atrás
-function updateTimer() {
+function updateCountdown() {
     const now = new Date().getTime();
-    const nextTargetTime = calculateNextTargetTime(now);
-    let t = nextTargetTime - now;
+    const distance = initialTargetTime * 1000 - now;
+    const currentDate = new Date();
+    const currentDayOfYear = Math.floor((currentDate - new Date(currentDate.getFullYear(), 0, 0)) / oneDayInMillis);
 
-    if (t <= 0) {
-        t = oneDayInMillis;
+    let targetTime = initialTargetTime * 1000 + currentDayOfYear * oneDayInMillis;
+    while (targetTime < now) {
+        targetTime += oneDayInMillis;
     }
 
-    const hours = String(Math.floor((t % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0'));
-    const minutes = String(Math.floor((t % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0'));
-    const seconds = String(Math.floor((t % (1000 * 60)) / 1000).toString().padStart(2, '0'));
+    const days = Math.floor(distance / (oneDayInMillis));
+    const hours = Math.floor((distance % (oneDayInMillis)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    const timeString = `${hours} : ${minutes} : ${seconds}`;
-
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        document.querySelector('.day-end-in-mb').textContent = timeString;
-    } else {
-        document.querySelector('.day-end-in').textContent = `Day Ends In: ${timeString}`;
-    }
+    // Actualizar los elementos HTML
+    document.getElementById("day").innerText = days;
+    document.getElementById("hour").innerText = hours;
+    document.getElementById("minute").innerText = minutes;
+    document.getElementById("second").innerText = seconds;
 }
 
-// Actualizar el temporizador cada segundo
-setInterval(updateTimer, 1000);
+// Actualizar la cuenta atrás cada segundo
+setInterval(updateCountdown, 1000);
 
-// Llamar inmediatamente a updateTimer para evitar retraso en la primera ejecución
-updateTimer();
+// Llamada inicial para establecer la cuenta atrás
+updateCountdown();
 
-
-
-
-
-// let moralisRecentEvents
-// function getMoralisData_server() {
-// 	$.getJSON('../get-moralis-data', function(data) {
-// 		moralisRecentEvents = data
-// 		renderMoralisData(moralisRecentEvents, true)
-// 	});
-// }
-// setInterval(() => {
-// 	getMoralisData_server()
-// }, 1000 * 10)
-// getMoralisData_server()
-
-
-
-
-
-/* Moralis init code */
-const serverUrl = "https://auctionstake-xxhes5os6a-uc.a.run.app";
-const appId = "ae56d858-4d57-4e08-8e66-0af14ff466d6";
-Moralis.start({serverUrl, appId});
-
-let aaaa
-async function getMoralisData() {
-    const data = await Moralis.Cloud.run("getEvents")
-	aaaa =data
-	renderMoralisData(data, true)
+async function getEvents() {
+    const events = await mainContract.getPastEvents('allEvents', {
+        fromBlock: 0,
+        toBlock: 'latest'
+    });
+    renderEvents(events);
 }
 
-
-
-setInterval(() => {
-	getMoralisData()
-}, 1000 * 10)
-getMoralisData()
-
-
-
-function getRecentEvents() {
-	$.getJSON('../get_sell_requests', function(data) {
-		data.sort(function(b, a) {
-			return parseInt(a.rawData.timestamp) - parseInt(b.rawData.timestamp);
-		});
-		doRecentEvengts(data)
-		console.log(data)
-	});
+function renderEvents(events) {
+    console.log("Events:", events);
+    // Lógica para mostrar eventos en la interfaz de usuario
 }
 
-
-function renderMoralisData(data, noattribute) {
-	let counter = 0
-	$('.recent-events')[0].innerHTML = ""
-	// let lastTx
-	// data.forEach(itm => {
-	// if (lastTx === itm.ele.tx) {
-	// 	lastTx = itm.tx
-	// 	return
-	// }
-	
-	// lastTx = itm.tx
-
-
-	if (noattribute) {
-		let txt
-		if (data[0]) {
-			data[0].forEach(el => {
-				txt = `Stake Started: ${(parseInt(el.attributes.rawAmount)).toFixed(2) / 1e18} AVC for ${el.attributes.duration} days`
-				dores(el)
-			})
-		}
-	
-		if (data[1]) {
-			data[1].forEach(el => {
-				txt = `Stake Collected: ${(parseInt(el.attributes.rawAmount) / 1e18).toFixed(5)} BNB`
-				dores(el)
-			})
-		}
-	
-		if (data[2]) {
-			data[2].forEach(el => {
-				txt = `Auction Entered:<br> ${parseInt(el.attributes.rawAmount) / 1e18} BNB`
-				dores(el)
-			})
-		}
-	
-		// if (data[3]) {
-		// 	data[3].forEach(el => {
-		// 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
-		// 		dores(el)
-		// 	})
-		// }
-	
-		if (data[3]) { 
-			data[3].forEach(el => {
-				counter++
-				if (counter < 15) {
-					txt = `${parseInt(el.attributes.rawAmount) / 1e18} AVC Stake sell request for ${parseInt(el.attributes.price) / 1e18} BNB`
-					dores(el)
-				}
-			})
-		}
-	
-		if (data[4]) {
-			data[4].forEach(el => {
-				txt = `${parseInt(el.attributes.rawAmount) / 1e18} BNB Loan request for ${parseInt(el.attributes.duration)} Days`
-				dores(el)
-			})
-		}
-	
-			
-		function dores(el) {
-			let p22 = el.attributes.addr.slice(42 - 5)
-	
-			$('.recent-events')[0].innerHTML += 
-				`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://testnet.bscscan.com//tx/${el.attributes.transaction_hash}')" 
-				style="background-color: #2e8b90;
-				cursor: pointer;
-				margin: 6px;
-				border-radius: 3px;
-				height: auto;
-				color: #ffffffb8;
-				text-align: center;
-				margin: 8px;
-				
-			"><div style="
-			background-color: #267579;
-			border-radius: 3px;
-			height: 20px;
-			color: #ffffff4f;
-			text-align: center;
-			font-weight: 900;
-			font-family: 'Montserrat-m1'
-			">${el.attributes.addr.slice(0, 5) + "..." + p22}</div><div style="
-			border-radius: 3px;
-			height: 20px;
-			color: #ffffffb8;
-			text-align: center;
-			display: contents;
-			font-size: inherit;
-			font-weight: 400;
-			font-family: 'Montserrat-m1';
-			">${txt}</div><div style="
-			font-size: 12px;
-		border-radius: 3px;
-		color: #ffffff52;
-		text-align: right;
-		margin-right: 3px;
-		/* font-weight: 900; */
-		font-family: 'Montserrat-m1';
-			">${timeSince(parseInt(el.attributes.timestamp) * 1000)} ago</div></div>`
-		}
-	 }
-	// else{
-	// 	let txt
-	// 	if (data[0]) {
-	// 		data[0].forEach(el => {
-	// 			txt = `Stake Started: ${parseInt(el.attributes.rawAmount) / 1e18} AVC for ${el.attributes.duration} days`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-	// 	if (data[1]) {
-	// 		data[1].forEach(el => {
-	// 			txt = `Stake Collected: ${(parseInt(el.attributes.rawAmount) / 1e18).toFixed(5)} BNB`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-	// 	if (data[2]) {
-	// 		data[2].forEach(el => {
-	// 			txt = `Auction Entered:<br> ${parseInt(el.attributes.rawAmount) / 1e18} BNB`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-	// 	// if (data[3]) {
-	// 	// 	data[3].forEach(el => {
-	// 	// 		txt = `Auction Collected: ${parseInt(el.attributes.rawAmount) / 1e18} AVC`
-	// 	// 		dores(el)
-	// 	// 	})
-	// 	// }
-	
-	// 	if (data[3]) {
-	// 		data[3].forEach(el => {
-	// 			counter++
-	// 			if (counter < 15) {
-	// 				txt = `${parseInt(el.attributes.rawAmount) / 1e18} AVC Stake sell request for ${parseInt(el.attributes.price) / 1e18} BNB`
-	// 				dores(el)
-	// 			}
-	// 		})
-	// 	}
-	
-	// 	if (data[4]) {
-	// 		data[4].forEach(el => {
-	// 			txt = `${parseInt(el.attributes.rawAmount) / 1e18} BNB Loan request for ${parseInt(el.attributes.duration)} Days`
-	// 			dores(el)
-	// 		})
-	// 	}
-	
-			
-	// 	function dores(el) {
-	// 		let p22 = el.attributes.addr.slice(42 - 5)
-	
-	// 		$('.recent-events')[0].innerHTML += 
-	// 			`<div id="${parseInt(el.attributes.timestamp)}" onclick="window.open('https://bscscan.com/tx/${el.attributes.transaction_hash}')" 
-	// 			style="background-color: #2e8b90;
-	// 			cursor: pointer;
-	// 			margin: 6px;
-	// 			border-radius: 3px;
-	// 			height: auto;
-	// 			color: #ffffffb8;
-	// 			text-align: center;
-	// 			margin: 8px;
-				
-	// 		"><div style="
-	// 		background-color: #267579;
-	// 		border-radius: 3px;
-	// 		height: 20px;
-	// 		color: #ffffff4f;
-	// 		text-align: center;
-	// 		font-weight: 900;
-	// 		font-family: 'Montserrat-m1'
-	// 		">${el.attributes.addr.slice(0, 5) + "..." + p22}</div><div style="
-	// 		border-radius: 3px;
-	// 		height: 20px;
-	// 		color: #ffffffb8;
-	// 		text-align: center;
-	// 		display: contents;
-	// 		font-size: inherit;
-	// 		font-weight: 400;
-	// 		font-family: 'Montserrat-m1';
-	// 		">${txt}</div><div style="
-	// 		font-size: 12px;
-	// 	border-radius: 3px;
-	// 	color: #ffffff52;
-	// 	text-align: right;
-	// 	margin-right: 3px;
-	// 	/* font-weight: 900; */
-	// 	font-family: 'Montserrat-m1';
-	// 		">${timeSince(parseInt(el.attributes.timestamp) * 1000)} ago</div></div>`
-	// 	}
-	// }
-
-
-	var aT = []
-	for (var i = 0 ; i <= $('.recent-events')[0].children.length ; i++) {
-		aT.push($('.recent-events')[0].children[i])
-	}
-
-	aT.sort(function(b, a) {
-		return parseInt(a.id) - parseInt(b.id);
-	});
-
-	$('.recent-events')[0].innerHTML = ""
-
-	for (var i = 0 ; i <= aT.length ; i++) { 
-		if (aT[i]) $('.recent-events')[0].appendChild(aT[i]) 
-	}
-}
-
-
-
-
-
-
-function timeSince(date) {
-	var seconds = Math.floor((new Date() - date) / 1000);
-	var interval = seconds / 31536000;
-  
-	if (interval > 1) {
-	  return Math.floor(interval) + " year/s";
-	}
-	interval = seconds / 2592000;
-	if (interval > 1) {
-	  return Math.floor(interval) + " month/s";
-	}
-	interval = seconds / 86400;
-	if (interval > 1) {
-	  return Math.floor(interval) + " day/s";
-	}
-	interval = seconds / 3600;
-	if (interval > 1) {
-	  return Math.floor(interval) + " hour/s";
-	}
-	interval = seconds / 60;
-	if (interval > 1) {
-	  return Math.floor(interval) + " minute/s";
-	}
-	return Math.floor(seconds) + " second/s";
-}
-
-
-
-
-
-
-function openModal3() {
-
-    $('.modal3')[0].style.marginTop = "auto"
-    $('.modal3')[0].style.marginLeft = "auto"
-
-    $('.modal3')[0].style.visibility = "visible"
-    $('.modal3')[0].style.opacity = "1"
-}
-
-function closeModal3() {
-    $('.modal3')[0].style.marginTop = "-10000px"
-    $('.modal3')[0].style.marginLeft = "-10000px"
-
-    $('.modal3')[0].style.visibility = "invisible"
-    $('.modal3')[0].style.opacity = "0"
-}
-
-function TransferAVCTokens() {
-	let toAddress = $('.inp-tra-2')[0].value
-    let amount = $('.inp-tra-1')[0].value
-	amount = web3.utils.toWei(amount,'ether');
-
-    if (!amount || !mainContract) return
-
-	
-
-    mainContract.methods.transfer(toAddress, amount).send({
-        from: user.address,
-        shouldPollResponse: false
-    }).then(res => {
-		doAlert(`Successfully Sent.`, 3)
-		closeModal3()
-    }).catch(err => {
-        doAlert("Something went wrong!", 2)
-    }).finally(res => {
-		closeModal3()
-    })
-}
-
-
-
-
-
-function copyreflink() {
-	
-	var linkk = `https://avaricetoken.io/?r=${user.address}`;
-	navigator.clipboard.writeText(linkk).then(function() {
-	  console.log('Async: Copying to clipboard was successful!');
-	}, function(err) {
-	  console.error('Async: Could not copy text: ', err);
-	});
-}
-
-function lobbyPoolclc2(day) {
-    let starter = 3e6 //- (3e6 * 0.5 / 100)
-    let toreturn
-
-    for (var i = 0 ; i < day; i++) {
-        let beshown = starter
-        starter -= starter *5/1000
-        toreturn = beshown.toFixed(0)
-    }
-
-    return toreturn
-}
-
-let dayEnteries = []
-
-function getDayEntery2(_day) {
-    mainContract.methods.lobbyEntry(_day).call({
-        shouldPollResponse: true
-    }).then(res => {
-		dayEnteries[_day] = parseInt(res) / 1e18
-    })
-}
-
-function averagePriceCalc() {
-	dayEnteries = []
-	//let duration = 3
-	for(var i = 0 ; i < 3 ; i++) {
-		getDayEntery2(currentDay - (i+1))
-	}
-
-	whenStartClcAvg()
-}
-
-function whenStartClcAvg() {
-	setTimeout(() => {
-		if (dayEnteries.length == currentDay) {
-			clcPrice()
-		}else{
-			whenStartClcAvg()
-		}
-	}, 500)
-}
-
-let avgPrice
-
-function clcPrice() {
-	//let duration = 3
-	let fn
-
-	avgPrice =
-	dayEnteries[currentDay - 1] / lobbyPoolclc2((currentDay - 1) + 1) +
-	dayEnteries[currentDay - 2] / lobbyPoolclc2((currentDay - 2) + 1) +
-	dayEnteries[currentDay - 3] / lobbyPoolclc2((currentDay - 3) + 1)	
-
-	avgPrice /= 3
-}
+// Llamada para obtener y renderizar eventos
+getEvents();
 
